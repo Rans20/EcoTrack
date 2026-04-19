@@ -1,14 +1,23 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Leaf, ShieldCheck, Zap } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
-import { activityModes } from '../constants';
-import type { RootStackParamList } from '../types';
+import { signInWithGoogle } from '../lib/auth';
+import { fetchActivityModes } from '../storage';
+import type { ActivityMode, RootStackParamList } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Welcome'>;
 
 export default function WelcomeScreen({ navigation }: Props) {
-  const [selectedMode, setSelectedMode] = useState(activityModes[0].value);
+  const [selectedMode, setSelectedMode] = useState<ActivityMode>('personal');
+
+  useEffect(() => {
+    fetchActivityModes()
+      .then((rows) => {
+        if (rows.length > 0) setSelectedMode(rows[0].value);
+      })
+      .catch((e) => console.warn('Failed to load activity modes', e));
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -46,9 +55,12 @@ export default function WelcomeScreen({ navigation }: Props) {
 
           <Pressable
             style={styles.secondaryButton}
-            onPress={() => {
-              console.log('Google Sign-In Pressed');
-              navigation.navigate('Home');
+            onPress={async () => {
+              try {
+                await signInWithGoogle();
+              } catch (e) {
+                console.warn('Google sign-in failed', e);
+              }
             }}
           >
             <Text style={styles.secondaryButtonText}>Sign in with Google</Text>

@@ -1,27 +1,27 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { leaderboardSamples } from '../constants';
-import { loadUserProfile } from '../storage';
-import type { RootStackParamList, UserProfile } from '../types';
+import { fetchLeaderboard, type LeaderboardEntry } from '../storage';
+import type { RootStackParamList } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Leaderboard'>;
 
-function formatEntry(profile: UserProfile) {
-  return `${profile.city}, ${profile.country} — ${profile.activityMode}`;
+function formatEntry(entry: LeaderboardEntry) {
+  const parts = [entry.city, entry.country].filter(Boolean);
+  const location = parts.length ? parts.join(', ') : 'Unknown';
+  const mode = entry.activity_mode ?? 'personal';
+  return `${location} — ${mode}`;
 }
 
 export default function LeaderboardScreen({ navigation }: Props) {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [entries, setEntries] = useState<UserProfile[]>(leaderboardSamples);
+  const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadUserProfile().then((storedProfile) => {
-      if (storedProfile) {
-        setProfile(storedProfile);
-        setEntries((prev) => [storedProfile, ...prev.filter((item) => item.id !== storedProfile.id)].slice(0, 6));
-      }
-    });
+    fetchLeaderboard()
+      .then((rows) => setEntries(rows))
+      .catch((e) => console.warn('Failed to fetch leaderboard', e))
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -33,19 +33,26 @@ export default function LeaderboardScreen({ navigation }: Props) {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Top local contributors</Text>
-        <FlatList
-          data={entries}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item, index }) => (
-            <View style={styles.row}>
-              <Text style={styles.rank}>{index + 1}</Text>
-              <View style={styles.rowContent}>
-                <Text style={styles.name}>{item.fullName}</Text>
-                <Text style={styles.detail}>{formatEntry(item)}</Text>
+        {loading ? (
+          <Text style={styles.empty}>Loading…</Text>
+        ) : entries.length === 0 ? (
+          <Text style={styles.empty}>No activity yet. Log a journey to appear here.</Text>
+        ) : (
+          <FlatList
+            data={entries}
+            keyExtractor={(item) => item.id ?? String(Math.random())}
+            renderItem={({ item, index }) => (
+              <View style={styles.row}>
+                <Text style={styles.rank}>{index + 1}</Text>
+                <View style={styles.rowContent}>
+                  <Text style={styles.name}>{item.full_name || 'Anonymous'}</Text>
+                  <Text style={styles.detail}>{formatEntry(item)}</Text>
+                </View>
+                <Text style={styles.co2}>{Number(item.total_co2_kg ?? 0).toFixed(1)} kg</Text>
               </View>
-            </View>
-          )}
-        />
+            )}
+          />
+        )}
       </View>
 
       <Pressable style={styles.button} onPress={() => navigation.navigate('Home')}>
@@ -84,6 +91,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     marginBottom: 12,
   },
+  empty: {
+    color: '#6a7a68',
+    fontStyle: 'italic',
+    paddingVertical: 12,
+  },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -107,6 +119,11 @@ const styles = StyleSheet.create({
   detail: {
     color: '#5e715d',
     marginTop: 2,
+  },
+  co2: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2f6d47',
   },
   button: {
     backgroundColor: '#2d724d',

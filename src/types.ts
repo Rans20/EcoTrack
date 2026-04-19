@@ -18,7 +18,7 @@ export interface UserProfile {
 
 export type RootStackParamList = {
   Welcome: undefined;
-  ProfileSetup: { selectedMode: ActivityMode };
+  ProfileSetup: { selectedMode?: ActivityMode } | undefined;
   Home: { profile?: UserProfile } | undefined;
   Map: undefined;
   Analytics: undefined;

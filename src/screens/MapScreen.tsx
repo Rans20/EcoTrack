@@ -4,6 +4,7 @@ import { Navigation, Compass, Info, Leaf } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, Dimensions, ActivityIndicator } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { fetchRouteSuggestions, type RouteSuggestion } from '../storage';
 import type { RootStackParamList } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Map'>;
@@ -19,6 +20,7 @@ export default function MapScreen({ navigation }: Props) {
   });
   const [loading, setLoading] = useState(true);
   const [routeType, setRouteType] = useState<'walking' | 'driving' | 'biking'>('biking');
+  const [routeSuggestion, setRouteSuggestion] = useState<RouteSuggestion | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -33,6 +35,12 @@ export default function MapScreen({ navigation }: Props) {
       });
       setLoading(false);
     })();
+  }, []);
+
+  useEffect(() => {
+    fetchRouteSuggestions()
+      .then((rows) => setRouteSuggestion(rows[0] ?? null))
+      .catch((e) => console.warn('Failed to load route suggestions', e));
   }, []);
 
   const routeColors = {
@@ -103,8 +111,12 @@ export default function MapScreen({ navigation }: Props) {
                 <Leaf size={20} color="#588157" />
                 <Text style={styles.suggestionTitle}>Optimal Route Found</Text>
               </View>
-              <Text style={styles.suggestionMain}>Save 0.8kg CO₂ via Park Lane</Text>
-              <Text style={styles.suggestionSub}>12 mins • 2.4 km • Shorter & Greener</Text>
+              <Text style={styles.suggestionMain}>
+                {routeSuggestion?.name ?? 'Loading suggestion…'}
+              </Text>
+              <Text style={styles.suggestionSub}>
+                {routeSuggestion?.benefit ?? ''}
+              </Text>
 
               <Pressable style={styles.goButton}>
                 <Text style={styles.goButtonText}>Start Journey</Text>

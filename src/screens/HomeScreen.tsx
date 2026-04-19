@@ -3,8 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Activity, ArrowRight, BarChart3, Map as MapIcon, Navigation, Wind } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { emissionSuggestions } from '../constants';
-import { loadUserProfile } from '../storage';
+import { fetchEmissionSuggestion, getCurrentUserProfile, getTodayCo2Kg } from '../storage';
 import type { RootStackParamList, UserProfile } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -14,14 +13,27 @@ const { width } = Dimensions.get('window');
 export default function HomeScreen({ navigation, route }: Props) {
   const [profile, setProfile] = useState<UserProfile | null>(route.params?.profile ?? null);
   const [moving, setMoving] = useState(false);
+  const [todayCo2, setTodayCo2] = useState<number>(0);
+  const [tip, setTip] = useState<string | null>(null);
 
   useEffect(() => {
     if (!profile) {
-      loadUserProfile().then((storedProfile) => {
+      getCurrentUserProfile().then((storedProfile) => {
         if (storedProfile) setProfile(storedProfile);
       });
     }
   }, [profile]);
+
+  useEffect(() => {
+    getTodayCo2Kg().then(setTodayCo2).catch(() => setTodayCo2(0));
+  }, []);
+
+  useEffect(() => {
+    const mode = profile?.activityMode ?? 'personal';
+    fetchEmissionSuggestion(mode)
+      .then((s) => setTip(s?.suggestion ?? null))
+      .catch(() => setTip(null));
+  }, [profile?.activityMode]);
 
   // Simulate movement data collection
   useEffect(() => {
@@ -62,7 +74,7 @@ export default function HomeScreen({ navigation, route }: Props) {
 
         <View style={styles.statsContainer}>
           <View>
-            <Text style={styles.mainStat}>2.4</Text>
+            <Text style={styles.mainStat}>{todayCo2.toFixed(1)}</Text>
             <Text style={styles.mainStatUnit}>kg CO₂ today</Text>
           </View>
           <View style={styles.verticalDivider} />
@@ -126,7 +138,7 @@ export default function HomeScreen({ navigation, route }: Props) {
           <ArrowRight size={18} color="#344E41" />
         </View>
         <Text style={styles.suggestionText}>
-          Switching to a biking route for your next trip can reduce your footprint by up to 85%!
+          {tip ?? 'Loading your personalized tip…'}
         </Text>
       </View>
     </ScrollView>

@@ -14,29 +14,41 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { engineSizes, industries } from '../constants';
-import { saveUserProfile } from '../storage';
-import type { EngineSize, Industry, UserProfile, RootStackParamList } from '../types';
+import { fetchEngineSizes, fetchIndustries, upsertUserProfile } from '../storage';
+import type { EngineSize, Industry, RootStackParamList } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfileSetup'>;
 
-function generateUniqueId(): string {
-  return `eco-${Math.random().toString(36).substr(2, 9)}`;
-}
-
 export default function ProfileSetupScreen({ route, navigation }: Props) {
-  const { selectedMode } = route.params;
+  const selectedMode = route.params?.selectedMode ?? 'personal';
   const [fullName, setFullName] = useState('');
   const [heightCm, setHeightCm] = useState('');
   const [weightKg, setWeightKg] = useState('');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
-  const [carEngineSize, setCarEngineSize] = useState<EngineSize>(engineSizes[0]);
-  const [industry, setIndustry] = useState<Industry>(industries[0]);
+  const [engineSizes, setEngineSizes] = useState<EngineSize[]>([]);
+  const [industries, setIndustries] = useState<Industry[]>([]);
+  const [carEngineSize, setCarEngineSize] = useState<EngineSize>('Electric');
+  const [industry, setIndustry] = useState<Industry>('Other');
   const [photoUri, setPhotoUri] = useState<string | null>(null);
 
   useEffect(() => {
     ImagePicker.requestMediaLibraryPermissionsAsync();
+  }, []);
+
+  useEffect(() => {
+    fetchEngineSizes()
+      .then((rows) => {
+        setEngineSizes(rows);
+        if (rows.length > 0) setCarEngineSize(rows[0]);
+      })
+      .catch((e) => console.warn('Failed to load engine sizes', e));
+    fetchIndustries()
+      .then((rows) => {
+        setIndustries(rows);
+        if (rows.length > 0) setIndustry(rows[0]);
+      })
+      .catch((e) => console.warn('Failed to load industries', e));
   }, []);
 
   async function pickImage() {
@@ -55,22 +67,22 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
   async function handleSubmit() {
     if (!fullName || !country || !city) return;
 
-    const profile: UserProfile = {
-      id: generateUniqueId(),
-      fullName,
-      heightCm,
-      weightKg,
-      country,
-      city,
-      carEngineSize,
-      industry,
-      activityMode: selectedMode,
-      photoUri,
-      createdAt: new Date().toISOString(),
-    };
-
-    await saveUserProfile(profile);
-    navigation.reset({ index: 0, routes: [{ name: 'Home', params: { profile } }] });
+    try {
+      const profile = await upsertUserProfile({
+        fullName,
+        heightCm,
+        weightKg,
+        country,
+        city,
+        carEngineSize,
+        industry,
+        activityMode: selectedMode,
+        photoUri,
+      });
+      navigation.reset({ index: 0, routes: [{ name: 'Home', params: { profile } }] });
+    } catch (e) {
+      console.warn('Failed to save profile', e);
+    }
   }
 
   return (
