@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Activity, ArrowRight, BarChart3, Map as MapIcon, Navigation, Wind, CloudRain, Sun, Cloud } from 'lucide-react-native';
+import { Activity, ArrowRight, BarChart3, Map as MapIcon, Navigation, Wind, CloudRain, Sun, Cloud, LayoutDashboard, MapPinned, Medal, PieChart, TrendingUp, Leaf, Zap } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { fetchEmissionSuggestion, getCurrentUserProfile, getTodayCo2Kg } from '../storage';
@@ -132,41 +132,41 @@ export default function HomeScreen({ navigation, route }: Props) {
           style={styles.gridCard}
           onPress={() => navigation.navigate('Map')}
         >
-          <View style={[styles.iconCircle, { backgroundColor: '#E9EDC9' }]}>
-            <Navigation size={24} color="#588157" />
+          <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
+            <MapPinned size={32} color="#2D6A4F" strokeWidth={2.5} />
           </View>
-          <Text style={styles.cardLabel}>Route Map</Text>
-          <Text style={styles.cardSubLabel}>Smarter travel</Text>
+          <Text style={styles.cardLabel}>Eco Maps</Text>
+          <Text style={styles.cardSubLabel}>Smart routes</Text>
         </Pressable>
 
         <Pressable
           style={styles.gridCard}
           onPress={() => navigation.navigate('Analytics')}
         >
-          <View style={[styles.iconCircle, { backgroundColor: '#D8F3DC' }]}>
-            <BarChart3 size={24} color="#2D6A4F" />
+          <View style={[styles.iconCircle, { backgroundColor: '#F1F8E9' }]}>
+            <PieChart size={32} color="#558B2F" strokeWidth={2.5} />
           </View>
           <Text style={styles.cardLabel}>Analytics</Text>
-          <Text style={styles.cardSubLabel}>Trend insights</Text>
+          <Text style={styles.cardSubLabel}>CO2 Insights</Text>
         </Pressable>
 
         <Pressable
           style={styles.gridCard}
           onPress={() => navigation.navigate('Leaderboard')}
         >
-          <View style={[styles.iconCircle, { backgroundColor: '#FFE8D6' }]}>
-            <Wind size={24} color="#A68A64" />
+          <View style={[styles.iconCircle, { backgroundColor: '#FFF3E0' }]}>
+            <Medal size={32} color="#EF6C00" strokeWidth={2.5} />
           </View>
-          <Text style={styles.cardLabel}>Community</Text>
-          <Text style={styles.cardSubLabel}>Compare stats</Text>
+          <Text style={styles.cardLabel}>Global Board</Text>
+          <Text style={styles.cardSubLabel}>Top Savers</Text>
         </Pressable>
 
         <View style={styles.gridCard}>
-          <View style={[styles.iconCircle, { backgroundColor: '#E0E1DD' }]}>
-            <MapIcon size={24} color="#415A77" />
+          <View style={[styles.iconCircle, { backgroundColor: '#E3F2FD' }]}>
+            <TrendingUp size={32} color="#1565C0" strokeWidth={2.5} />
           </View>
-          <Text style={styles.cardLabel}>History</Text>
-          <Text style={styles.cardSubLabel}>Past routes</Text>
+          <Text style={styles.cardLabel}>Milestones</Text>
+          <Text style={styles.cardSubLabel}>Achievements</Text>
         </View>
       </View>
 
@@ -186,11 +186,12 @@ export default function HomeScreen({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FAF9F6',
+    backgroundColor: '#F7FBF7',
   },
   content: {
     padding: 20,
     paddingTop: 60,
+    paddingBottom: 100,
   },
   header: {
     flexDirection: 'row',
@@ -199,24 +200,28 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   greeting: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#344E41',
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#1B4332',
   },
   date: {
     fontSize: 14,
-    color: '#A3B18A',
-    fontWeight: '500',
+    color: '#74C69D',
+    fontWeight: '600',
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#E9EDC9',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#D8F3DC',
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#CCD5AE',
+    borderColor: '#B7E4C7',
+    shadowColor: '#2D6A4F',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 3,
   },
   avatarText: {
     fontSize: 18,
@@ -225,58 +230,61 @@ const styles = StyleSheet.create({
   },
   weatherCard: {
     backgroundColor: '#fff',
-    borderRadius: 24,
-    padding: 16,
+    borderRadius: 28,
+    padding: 20,
     marginBottom: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
+    shadowColor: '#2D6A4F',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    elevation: 5,
     position: 'relative',
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#F0F7F0',
   },
   weatherInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginBottom: 12,
+    gap: 12,
+    marginBottom: 14,
   },
   weatherTemp: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#344E41',
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#1B4332',
   },
   aiBadge: {
     position: 'absolute',
-    top: 16,
-    right: 16,
-    backgroundColor: '#E9EDC9',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    top: 20,
+    right: 20,
+    backgroundColor: '#D8F3DC',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 10,
   },
   aiBadgeText: {
     fontSize: 10,
-    fontWeight: '800',
-    color: '#588157',
+    fontWeight: '900',
+    color: '#2D6A4F',
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   weatherAdvice: {
-    fontSize: 14,
-    color: '#588157',
-    lineHeight: 20,
-    fontWeight: '500',
+    fontSize: 15,
+    color: '#409167',
+    lineHeight: 22,
+    fontWeight: '600',
   },
   mainDashboard: {
-    borderRadius: 28,
-    padding: 24,
+    borderRadius: 32,
+    padding: 28,
     marginBottom: 24,
-    shadowColor: '#3A5A40',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.2,
-    shadowRadius: 15,
-    elevation: 8,
+    shadowColor: '#1B4332',
+    shadowOffset: { width: 0, height: 15 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 10,
   },
   dashHeader: {
     flexDirection: 'row',
@@ -346,37 +354,47 @@ const styles = StyleSheet.create({
   gridCard: {
     width: (width - 56) / 2,
     backgroundColor: '#fff',
-    borderRadius: 24,
-    padding: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
+    borderRadius: 28,
+    padding: 20,
+    shadowColor: '#2D6A4F',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 15,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#F0F7F0',
   },
   iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+    width: 56,
+    height: 56,
+    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 2,
   },
   cardLabel: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#344E41',
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#1B4332',
   },
   cardSubLabel: {
-    fontSize: 12,
-    color: '#A3B18A',
-    marginTop: 2,
+    fontSize: 13,
+    color: '#52B788',
+    marginTop: 4,
+    fontWeight: '500',
   },
   suggestionCard: {
-    backgroundColor: '#E9EDC9',
-    borderRadius: 24,
-    padding: 20,
+    backgroundColor: '#D8F3DC',
+    borderRadius: 28,
+    padding: 24,
     marginBottom: 20,
+    borderWidth: 1,
+    borderColor: '#B7E4C7',
   },
   suggestionHeader: {
     flexDirection: 'row',

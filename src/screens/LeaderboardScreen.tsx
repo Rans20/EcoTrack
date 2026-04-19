@@ -1,6 +1,6 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Medal, Trophy, Users, Award } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { fetchLeaderboard, type LeaderboardEntry } from '../storage';
 import type { RootStackParamList } from '../types';
 
@@ -26,38 +26,66 @@ export default function LeaderboardScreen({ navigation }: Props) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>City & Country Leaderboard</Text>
-      <Text style={styles.subtitle}>
-        Track the top sustainable users in your area and see how your city and country are performing.
-      </Text>
+      <View style={styles.header}>
+        <View style={styles.headerIcon}>
+           <Medal size={40} color="#fff" strokeWidth={2.5} />
+        </View>
+        <View>
+          <Text style={styles.title}>Impact Leaders</Text>
+          <Text style={styles.subtitle}>Top eco-warriors globally</Text>
+        </View>
+      </View>
+
+      <View style={styles.statsOverview}>
+        <View style={styles.miniStat}>
+          <Users size={20} color="#2D6A4F" />
+          <Text style={styles.miniStatValue}>1.2k</Text>
+          <Text style={styles.miniStatLabel}>Active</Text>
+        </View>
+        <View style={styles.miniStat}>
+          <Trophy size={20} color="#EF6C00" />
+          <Text style={styles.miniStatValue}>#42</Text>
+          <Text style={styles.miniStatLabel}>Your Rank</Text>
+        </View>
+        <View style={styles.miniStat}>
+          <Award size={20} color="#1565C0" />
+          <Text style={styles.miniStatValue}>8</Text>
+          <Text style={styles.miniStatLabel}>Badges</Text>
+        </View>
+      </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Top local contributors</Text>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Global Rankings</Text>
+          <Text style={styles.seeAll}>This Week</Text>
+        </View>
         {loading ? (
-          <Text style={styles.empty}>Loading…</Text>
+          <ActivityIndicator color="#2D6A4F" style={{ marginVertical: 40 }} />
         ) : entries.length === 0 ? (
           <Text style={styles.empty}>No activity yet. Log a journey to appear here.</Text>
         ) : (
           <FlatList
             data={entries}
             keyExtractor={(item) => item.id ?? String(Math.random())}
+            contentContainerStyle={{ paddingBottom: 20 }}
             renderItem={({ item, index }) => (
-              <View style={styles.row}>
-                <Text style={styles.rank}>{index + 1}</Text>
+              <View style={[styles.row, index === 0 && styles.topRow]}>
+                <View style={[styles.rankBadge, index < 3 && styles[`rankBadge${index + 1}`]]}>
+                  <Text style={[styles.rankText, index < 3 && styles.rankTextTop]}>{index + 1}</Text>
+                </View>
                 <View style={styles.rowContent}>
                   <Text style={styles.name}>{item.full_name || 'Anonymous'}</Text>
                   <Text style={styles.detail}>{formatEntry(item)}</Text>
                 </View>
-                <Text style={styles.co2}>{Number(item.total_co2_kg ?? 0).toFixed(1)} kg</Text>
+                <View style={styles.co2Badge}>
+                  <Text style={styles.co2Value}>{Number(item.total_co2_kg ?? 0).toFixed(1)}</Text>
+                  <Text style={styles.co2Unit}>kg</Text>
+                </View>
               </View>
             )}
           />
         )}
       </View>
-
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.buttonText}>Back to Dashboard</Text>
-      </Pressable>
     </View>
   );
 }
@@ -65,49 +93,139 @@ export default function LeaderboardScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3faf2',
-    padding: 22,
+    backgroundColor: '#F7FBF7',
+    padding: 20,
+    paddingTop: 60,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+    marginBottom: 24,
+  },
+  headerIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: '#2D6A4F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
   },
   title: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
+    fontSize: 26,
+    fontWeight: '800',
+    color: '#1B4332',
   },
   subtitle: {
-    color: '#4a5e48',
-    marginBottom: 18,
-    lineHeight: 20,
+    fontSize: 14,
+    color: '#52B788',
+    fontWeight: '600',
+  },
+  statsOverview: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 24,
+  },
+  miniStat: {
+    width: '31%',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 12,
+    alignItems: 'center',
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+    borderWidth: 1,
+    borderColor: '#F0F7F0',
+  },
+  miniStatValue: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#1B4332',
+    marginTop: 4,
+  },
+  miniStatLabel: {
+    fontSize: 10,
+    color: '#95D5B2',
+    textTransform: 'uppercase',
+    fontWeight: '700',
   },
   section: {
+    flex: 1,
     backgroundColor: '#ffffff',
-    borderRadius: 18,
-    padding: 18,
-    marginBottom: 18,
+    borderRadius: 32,
+    padding: 24,
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 5,
     borderWidth: 1,
-    borderColor: '#d7ead5',
+    borderColor: '#F0F7F0',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
+    fontWeight: '800',
+    color: '#1B4332',
+  },
+  seeAll: {
+    fontSize: 12,
     fontWeight: '700',
-    marginBottom: 12,
+    color: '#409167',
+    backgroundColor: '#D8F3DC',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 10,
   },
   empty: {
-    color: '#6a7a68',
-    fontStyle: 'italic',
-    paddingVertical: 12,
+    color: '#95D5B2',
+    textAlign: 'center',
+    marginTop: 40,
+    fontSize: 16,
+    fontWeight: '500',
   },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
+    paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#eef5ee',
+    borderBottomColor: '#F0F7F0',
   },
-  rank: {
-    width: 28,
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#2f6d47',
+  topRow: {
+    backgroundColor: '#F7FBF7',
+    borderRadius: 16,
+    marginHorizontal: -8,
+    paddingHorizontal: 8,
+  },
+  rankBadge: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    backgroundColor: '#F0F7F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  rankBadge1: { backgroundColor: '#FFD700' },
+  rankBadge2: { backgroundColor: '#C0C0C0' },
+  rankBadge3: { backgroundColor: '#CD7F32' },
+  rankText: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#409167',
+  },
+  rankTextTop: {
+    color: '#fff',
   },
   rowContent: {
     flex: 1,
@@ -115,24 +233,26 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '700',
+    color: '#1B4332',
   },
   detail: {
-    color: '#5e715d',
+    color: '#74C69D',
+    fontSize: 12,
     marginTop: 2,
+    fontWeight: '500',
   },
-  co2: {
-    fontSize: 14,
+  co2Badge: {
+    alignItems: 'flex-end',
+  },
+  co2Value: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#2D6A4F',
+  },
+  co2Unit: {
+    fontSize: 10,
+    color: '#95D5B2',
     fontWeight: '700',
-    color: '#2f6d47',
-  },
-  button: {
-    backgroundColor: '#2d724d',
-    padding: 14,
-    borderRadius: 14,
-    alignItems: 'center',
-  },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '700',
+    textTransform: 'uppercase',
   },
 });

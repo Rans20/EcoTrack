@@ -19,7 +19,7 @@ export default function MapScreen({ navigation }: Props) {
     longitudeDelta: 0.01,
   });
   const [loading, setLoading] = useState(true);
-  const [routeType, setRouteType] = useState<'walking' | 'driving' | 'biking'>('biking');
+  const [routeType, setRouteType] = useState<'walking' | 'driving' | 'hiking'>('hiking');
   const [routeSuggestion, setRouteSuggestion] = useState<RouteSuggestion | null>(null);
 
   useEffect(() => {
@@ -44,9 +44,9 @@ export default function MapScreen({ navigation }: Props) {
   }, []);
 
   const routeColors = {
-    walking: '#A3B18A',
-    driving: '#344E41',
-    hiking: '#588157',
+    walking: '#95D5B2',
+    driving: '#1B4332',
+    hiking: '#2D6A4F',
   };
 
   return (
@@ -133,39 +133,44 @@ const mapStyle = [
   {
     "featureType": "all",
     "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#617454" }]
+    "stylers": [{ "color": "#1B4332" }]
   },
   {
     "featureType": "water",
     "elementType": "geometry",
-    "stylers": [{ "color": "#CDE3D2" }]
+    "stylers": [{ "color": "#D8F3DC" }]
   },
   {
     "featureType": "landscape",
     "elementType": "geometry",
-    "stylers": [{ "color": "#F5F5F0" }]
+    "stylers": [{ "color": "#F7FBF7" }]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [{ "color": "#B7E4C7" }]
   }
 ];
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FAF9F6' },
+  container: { flex: 1, backgroundColor: '#F7FBF7' },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loaderText: { marginTop: 16, color: '#588157', fontWeight: '600' },
+  loaderText: { marginTop: 16, color: '#2D6A4F', fontWeight: '800' },
   map: { width, height },
   userMarker: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: 'rgba(88, 129, 87, 0.2)',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: 'rgba(45, 106, 79, 0.2)',
     justifyContent: 'center',
     alignItems: 'center',
   },
   userMarkerInner: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
-    backgroundColor: '#588157',
-    borderWidth: 2,
+    width: 14,
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#2D6A4F',
+    borderWidth: 3,
     borderColor: '#fff',
   },
   topOverlay: {
@@ -178,88 +183,102 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 14,
-    borderRadius: 16,
+    padding: 16,
+    borderRadius: 20,
     gap: 12,
-    shadowColor: '#000',
+    shadowColor: '#1B4332',
     shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    shadowRadius: 15,
+    elevation: 8,
+    borderWidth: 1,
+    borderColor: '#F0F7F0',
   },
-  searchText: { color: '#888', fontSize: 14 },
+  searchText: { color: '#95D5B2', fontSize: 15, fontWeight: '500' },
   bottomPanel: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 100, // Adjusted for new tab bar height
     left: 20,
     right: 20,
   },
   typeSelector: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255,255,255,0.9)',
-    borderRadius: 20,
-    padding: 6,
+    backgroundColor: 'rgba(255,255,255,0.95)',
+    borderRadius: 24,
+    padding: 8,
     marginBottom: 16,
-    gap: 6,
+    gap: 8,
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    elevation: 5,
   },
   typeBtn: {
     flex: 1,
-    paddingVertical: 10,
+    paddingVertical: 12,
     alignItems: 'center',
-    borderRadius: 16,
+    borderRadius: 18,
   },
   typeBtnActive: {
-    backgroundColor: '#588157',
+    backgroundColor: '#2D6A4F',
   },
   typeBtnText: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#588157',
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#2D6A4F',
   },
   typeBtnTextActive: {
     color: '#fff',
   },
   suggestionBox: {
     backgroundColor: '#fff',
-    borderRadius: 24,
-    padding: 20,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 15,
-    elevation: 10,
+    borderRadius: 32,
+    padding: 24,
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.15,
+    shadowRadius: 20,
+    elevation: 12,
+    borderWidth: 1,
+    borderColor: '#F0F7F0',
   },
   suggestionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 8,
+    gap: 10,
+    marginBottom: 10,
   },
   suggestionTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: '#588157',
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#409167',
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 1,
   },
   suggestionMain: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: '800',
-    color: '#344E41',
-    marginBottom: 4,
+    color: '#1B4332',
+    marginBottom: 6,
   },
   suggestionSub: {
-    fontSize: 14,
-    color: '#A3B18A',
-    marginBottom: 16,
+    fontSize: 15,
+    color: '#52B788',
+    marginBottom: 20,
+    fontWeight: '500',
   },
   goButton: {
-    backgroundColor: '#344E41',
-    paddingVertical: 14,
-    borderRadius: 16,
+    backgroundColor: '#1B4332',
+    paddingVertical: 18,
+    borderRadius: 20,
     alignItems: 'center',
+    shadowColor: '#1B4332',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
   goButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: '700',
+    fontSize: 18,
+    fontWeight: '800',
   },
 });

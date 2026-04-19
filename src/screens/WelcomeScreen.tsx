@@ -1,5 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Leaf, ShieldCheck, Zap } from 'lucide-react-native';
+import { Leaf, ShieldCheck, Zap, Globe, Sparkles } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
 import { signInWithGoogle } from '../lib/auth';
@@ -38,12 +38,22 @@ export default function WelcomeScreen({ navigation }: Props) {
 
           <View style={styles.habitTrackingSection}>
             <View style={styles.habitCard}>
-              <Zap size={24} color="#D4A373" />
-              <Text style={styles.habitText}>Track energy & transport</Text>
+              <View style={[styles.iconBox, { backgroundColor: '#E8F5E9' }]}>
+                <Zap size={24} color="#2D6A4F" strokeWidth={2.5} />
+              </View>
+              <View>
+                <Text style={styles.habitTitle}>Energy Tracking</Text>
+                <Text style={styles.habitText}>Monitor daily carbon output</Text>
+              </View>
             </View>
             <View style={styles.habitCard}>
-              <ShieldCheck size={24} color="#A3B18A" />
-              <Text style={styles.habitText}>Build sustainable habits</Text>
+              <View style={[styles.iconBox, { backgroundColor: '#F1F8E9' }]}>
+                <Globe size={24} color="#558B2F" strokeWidth={2.5} />
+              </View>
+              <View>
+                <Text style={styles.habitTitle}>Sustainable Routes</Text>
+                <Text style={styles.habitText}>AI-powered eco-navigation</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -77,7 +87,7 @@ export default function WelcomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#FAF9F6', // Off-white/Cream
+    backgroundColor: '#F7FBF7',
   },
   container: {
     flex: 1,
@@ -86,80 +96,97 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    marginTop: 40,
+    marginTop: 60,
   },
   logo: {
-    width: 250,
-    height: 150,
+    width: 280,
+    height: 180,
   },
   content: {
-    marginTop: 20,
+    marginTop: 0,
   },
   title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#344E41', // Darker forest green
+    fontSize: 34,
+    fontWeight: '800',
+    color: '#1B4332',
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: 12,
   },
   subtitle: {
     fontSize: 16,
-    color: '#588157',
+    color: '#409167',
     textAlign: 'center',
     lineHeight: 24,
-    marginBottom: 32,
+    marginBottom: 40,
+    fontWeight: '500',
   },
   habitTrackingSection: {
-    gap: 12,
+    gap: 16,
   },
   habitCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#fff',
-    padding: 16,
-    borderRadius: 20,
-    gap: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    elevation: 2,
+    padding: 20,
+    borderRadius: 28,
+    gap: 16,
+    shadowColor: '#1B4332',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.08,
+    shadowRadius: 15,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#F0F7F0',
+  },
+  iconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  habitTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#1B4332',
   },
   habitText: {
-    fontSize: 16,
-    color: '#3A5A40',
+    fontSize: 14,
+    color: '#52B788',
     fontWeight: '500',
+    marginTop: 2,
   },
   footer: {
-    gap: 12,
-    marginBottom: 20,
+    gap: 16,
+    marginBottom: 30,
   },
   primaryButton: {
-    backgroundColor: '#588157',
-    paddingVertical: 18,
+    backgroundColor: '#2D6A4F',
+    paddingVertical: 20,
     borderRadius: 24,
     alignItems: 'center',
-    shadowColor: '#588157',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowColor: '#1B4332',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 15,
+    elevation: 8,
   },
   primaryButtonText: {
     color: '#fff',
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   secondaryButton: {
     paddingVertical: 18,
     borderRadius: 24,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#DAD7CD',
+    borderWidth: 2,
+    borderColor: '#D8F3DC',
+    backgroundColor: '#fff',
   },
   secondaryButtonText: {
-    color: '#3A5A40',
+    color: '#2D6A4F',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
 });

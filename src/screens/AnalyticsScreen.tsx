@@ -1,6 +1,7 @@
+import { PieChart as PieChartIcon, TrendingUp, Leaf, BarChart3, Calendar } from 'lucide-react-native';
 import React, { useEffect, useMemo, useState } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { LineChart, BarChart, PieChart } from 'react-native-chart-kit';
+import { Dimensions, ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { LineChart, BarChart } from 'react-native-chart-kit';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { supabase } from '../lib/supabase';
 import type { RootStackParamList } from '../types';
@@ -47,11 +48,15 @@ function bucketByMode(rows: ActivityRow[]) {
 
 export default function AnalyticsScreen({ navigation }: Props) {
   const [rows, setRows] = useState<ActivityRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        setLoading(false);
+        return;
+      }
       const since = new Date();
       since.setMonth(since.getMonth() - 6);
       const { data, error } = await supabase
@@ -62,6 +67,7 @@ export default function AnalyticsScreen({ navigation }: Props) {
         .order('started_at');
       if (error) {
         console.warn('Failed to load activities', error);
+        setLoading(false);
         return;
       }
       setRows((data ?? []).map(r => ({
@@ -69,6 +75,7 @@ export default function AnalyticsScreen({ navigation }: Props) {
         co2_kg: Number(r.co2_kg),
         mode: r.mode,
       })));
+      setLoading(false);
     })();
   }, []);
 
@@ -83,90 +90,128 @@ export default function AnalyticsScreen({ navigation }: Props) {
     datasets: [
       {
         data: monthly.map(b => b.co2 || 0),
-        color: (opacity = 1) => `rgba(57, 255, 20, ${opacity})`,
-        strokeWidth: 2,
+        color: (opacity = 1) => `rgba(45, 106, 79, ${opacity})`,
+        strokeWidth: 3,
       },
     ],
-    legend: ['CO2 Trends (kg)'],
   };
 
   const chartConfig = {
-    backgroundColor: '#0a1a0a',
-    backgroundGradientFrom: '#122612',
-    backgroundGradientTo: '#0a1a0a',
+    backgroundColor: '#ffffff',
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo: '#ffffff',
     decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(0, 255, 255, ${opacity})`, // Cyan/Blue highlight
-    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    color: (opacity = 1) => `rgba(45, 106, 79, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(27, 67, 50, ${opacity})`,
     style: {
       borderRadius: 16,
     },
     propsForDots: {
       r: '6',
-      strokeWidth: '2',
-      stroke: '#39FF14',
+      strokeWidth: '3',
+      stroke: '#409167',
     },
+    propsForBackgroundLines: {
+      strokeDasharray: '',
+      stroke: '#F0F7F0',
+    }
   };
 
-  return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Carbon Analytics</Text>
-        <Text style={styles.subtitle}>Real-time emission tracking & trends</Text>
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+        <ActivityIndicator size="large" color="#2D6A4F" />
       </View>
+    );
+  }
 
-      <View style={styles.chartCard}>
-        <Text style={styles.chartTitle}>Emissions Over Time</Text>
-        <LineChart
-          data={lineData}
-          width={screenWidth - 48}
-          height={220}
-          chartConfig={chartConfig}
-          bezier
-          style={styles.chart}
-        />
+  return (
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 120 }}>
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View style={styles.headerIcon}>
+            <PieChartIcon size={32} color="#fff" strokeWidth={2.5} />
+          </View>
+          <View>
+            <Text style={styles.title}>Analytics</Text>
+            <Text style={styles.subtitle}>Environmental footprint</Text>
+          </View>
+        </View>
       </View>
 
       <View style={styles.statsRow}>
-        <View style={[styles.statBox, { borderColor: '#39FF14' }]}>
+        <View style={styles.statBox}>
+          <View style={[styles.miniIcon, { backgroundColor: '#E8F5E9' }]}>
+            <TrendingUp size={18} color="#2D6A4F" />
+          </View>
           <Text style={styles.statValue}>{avgPerDay.toFixed(1)}</Text>
           <Text style={styles.statLabel}>Avg kg/day</Text>
         </View>
-        <View style={[styles.statBox, { borderColor: '#00FFFF' }]}>
+        <View style={styles.statBox}>
+          <View style={[styles.miniIcon, { backgroundColor: '#F1F8E9' }]}>
+            <Leaf size={18} color="#558B2F" />
+          </View>
           <Text style={styles.statValue}>{totalCo2.toFixed(1)}</Text>
           <Text style={styles.statLabel}>Total kg (6mo)</Text>
         </View>
       </View>
 
       <View style={styles.chartCard}>
-        <Text style={styles.chartTitle}>CO₂ by Mode</Text>
+        <View style={styles.chartHeader}>
+          <BarChart3 size={20} color="#2D6A4F" />
+          <Text style={styles.chartTitle}>Emission Trends</Text>
+        </View>
+        <LineChart
+          data={lineData}
+          width={screenWidth - 72}
+          height={200}
+          chartConfig={chartConfig}
+          bezier
+          style={styles.chart}
+          withInnerLines={true}
+          withOuterLines={false}
+        />
+      </View>
+
+      <View style={styles.chartCard}>
+        <View style={styles.chartHeader}>
+          <Calendar size={20} color="#558B2F" />
+          <Text style={styles.chartTitle}>Impact by Activity</Text>
+        </View>
         <BarChart
           data={{
-            labels: ['Driving', 'Biking', 'Personal', 'Shipping'],
+            labels: ['Drive', 'Bike', 'Walk', 'Ship'],
             datasets: [{
               data: [
-                modeTotals.driving,
-                modeTotals.biking,
-                modeTotals.personal,
-                modeTotals.shipping,
+                modeTotals.driving || 0,
+                modeTotals.biking || 0,
+                modeTotals.personal || 0,
+                modeTotals.shipping || 0,
               ],
             }],
           }}
-          width={screenWidth - 48}
-          height={220}
+          width={screenWidth - 72}
+          height={200}
           yAxisLabel=""
           yAxisSuffix="kg"
           chartConfig={{
             ...chartConfig,
-            backgroundGradientFrom: '#001a33',
+            backgroundGradientFrom: '#ffffff',
+            color: (opacity = 1) => `rgba(82, 183, 136, ${opacity})`,
           }}
           style={styles.chart}
+          fromZero
+          showValuesOnTopOfBars
         />
       </View>
 
       <View style={styles.comparisonPanel}>
-        <Text style={styles.comparisonTitle}>Global Comparison</Text>
+        <View style={styles.badge}>
+          <Text style={styles.badgeText}>Performance</Text>
+        </View>
+        <Text style={styles.comparisonTitle}>Above Average</Text>
         <Text style={styles.comparisonText}>
-          You are performing better than <Text style={styles.highlight}>68%</Text> of users in your city.
+          You are performing better than <Text style={styles.highlight}>68%</Text> of users in your city. Keep using eco-friendly transport!
         </Text>
       </View>
     </ScrollView>
@@ -176,85 +221,145 @@ export default function AnalyticsScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#050a05',
+    backgroundColor: '#F7FBF7',
   },
   header: {
     padding: 24,
-    paddingTop: 40,
+    paddingTop: 60,
+    marginBottom: 8,
+  },
+  headerTop: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  headerIcon: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    backgroundColor: '#2D6A4F',
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 8,
   },
   title: {
-    fontSize: 28,
+    fontSize: 26,
     fontWeight: '800',
-    color: '#fff',
-    letterSpacing: 1,
+    color: '#1B4332',
   },
   subtitle: {
     fontSize: 14,
-    color: '#39FF14',
-    marginTop: 4,
-    textTransform: 'uppercase',
+    color: '#52B788',
+    fontWeight: '600',
   },
   chartCard: {
-    backgroundColor: '#111',
+    backgroundColor: '#fff',
     marginHorizontal: 20,
     marginBottom: 24,
-    borderRadius: 20,
-    padding: 16,
+    borderRadius: 32,
+    padding: 20,
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 5,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: '#F0F7F0',
+  },
+  chartHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 20,
   },
   chartTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#fff',
-    marginBottom: 16,
+    fontWeight: '800',
+    color: '#1B4332',
   },
   chart: {
     borderRadius: 16,
+    marginLeft: -12,
   },
   statsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     marginBottom: 24,
+    gap: 16,
   },
   statBox: {
-    width: '47%',
-    backgroundColor: '#111',
-    borderRadius: 16,
-    padding: 16,
+    flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 28,
+    padding: 20,
     alignItems: 'center',
-    borderLeftWidth: 4,
+    shadowColor: '#1B4332',
+    shadowOpacity: 0.08,
+    shadowRadius: 15,
+    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#F0F7F0',
+  },
+  miniIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
   },
   statValue: {
     fontSize: 24,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: '900',
+    color: '#1B4332',
   },
   statLabel: {
     fontSize: 12,
-    color: '#888',
-    marginTop: 4,
+    color: '#74C69D',
+    marginTop: 2,
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
   comparisonPanel: {
     marginHorizontal: 20,
-    padding: 20,
-    backgroundColor: '#112211',
-    borderRadius: 16,
+    padding: 24,
+    backgroundColor: '#D8F3DC',
+    borderRadius: 32,
     marginBottom: 40,
+    borderWidth: 1,
+    borderColor: '#B7E4C7',
+  },
+  badge: {
+    backgroundColor: '#2D6A4F',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 8,
+    marginBottom: 12,
+  },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '900',
+    textTransform: 'uppercase',
   },
   comparisonTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '700',
+    color: '#1B4332',
+    fontSize: 20,
+    fontWeight: '800',
     marginBottom: 8,
   },
   comparisonText: {
-    color: '#ccc',
+    color: '#409167',
     lineHeight: 22,
+    fontSize: 15,
+    fontWeight: '500',
   },
   highlight: {
-    color: '#39FF14',
-    fontWeight: 'bold',
+    color: '#1B4332',
+    fontWeight: '900',
   },
 });
