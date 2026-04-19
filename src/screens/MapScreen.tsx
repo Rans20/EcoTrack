@@ -21,7 +21,6 @@ export default function MapScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [routeType, setRouteType] = useState<'walking' | 'driving' | 'biking'>('biking');
   const [routeSuggestion, setRouteSuggestion] = useState<RouteSuggestion | null>(null);
-  const [routeType, setRouteType] = useState<'walking' | 'driving' | 'hiking'>('walking');
 
   useEffect(() => {
     (async () => {

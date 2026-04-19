@@ -6,14 +6,12 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { supabase } from '../lib/supabase';
 import { BarChart3, Home, Map as MapIcon, Trophy } from 'lucide-react-native';
-import React from 'react';
 import AnalyticsScreen from '../screens/AnalyticsScreen';
 import HomeScreen from '../screens/HomeScreen';
 import LeaderboardScreen from '../screens/LeaderboardScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
-import AnalyticsScreen from '../screens/AnalyticsScreen';
 import { getCurrentUserProfile } from '../storage';
 import type { RootStackParamList } from '../types';
 

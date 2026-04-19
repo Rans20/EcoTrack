@@ -24,7 +24,7 @@ export default function WelcomeScreen({ navigation }: Props) {
       <View style={styles.container}>
         <View style={styles.imageContainer}>
            <Image
-             source={require('../../assets/ecotrack_logo_new.png')}
+             source={require('../../assets/splash-icon.png')}
              style={styles.logo}
              resizeMode="contain"
            />
