@@ -23,8 +23,11 @@ export default function WelcomeScreen({ navigation }: Props) {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <View style={styles.imageContainer}>
-           <Leaf size={80} color="#4A6741" strokeWidth={1.5} />
-           <View style={styles.blob} />
+           <Image
+             source={require('../../assets/ecotrack_logo_new.png')}
+             style={styles.logo}
+             resizeMode="contain"
+           />
         </View>
 
         <View style={styles.content}>
@@ -83,17 +86,11 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: 'center',
-    marginTop: 60,
-    position: 'relative',
+    marginTop: 40,
   },
-  blob: {
-    position: 'absolute',
-    width: 120,
-    height: 120,
-    backgroundColor: '#E9EDC9',
-    borderRadius: 60,
-    zIndex: -1,
-    top: -10,
+  logo: {
+    width: 250,
+    height: 150,
   },
   content: {
     marginTop: 20,

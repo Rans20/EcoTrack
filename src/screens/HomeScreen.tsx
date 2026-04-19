@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Activity, ArrowRight, BarChart3, Map as MapIcon, Navigation, Wind } from 'lucide-react-native';
+import { Activity, ArrowRight, BarChart3, Map as MapIcon, Navigation, Wind, CloudRain, Sun, Cloud } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { fetchEmissionSuggestion, getCurrentUserProfile, getTodayCo2Kg } from '../storage';
@@ -10,11 +10,14 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 const { width } = Dimensions.get('window');
 
+type WeatherCondition = 'Sunny' | 'Rainy' | 'Cloudy';
+
 export default function HomeScreen({ navigation, route }: Props) {
   const [profile, setProfile] = useState<UserProfile | null>(route.params?.profile ?? null);
   const [moving, setMoving] = useState(false);
   const [todayCo2, setTodayCo2] = useState<number>(0);
   const [tip, setTip] = useState<string | null>(null);
+  const [weather, setWeather] = useState<WeatherCondition>('Sunny');
 
   useEffect(() => {
     if (!profile) {
@@ -39,9 +42,32 @@ export default function HomeScreen({ navigation, route }: Props) {
   useEffect(() => {
     const interval = setInterval(() => {
       setMoving(prev => !prev);
-    }, 3000);
+    }, 5000);
+
+    const weatherConditions: WeatherCondition[] = ['Sunny', 'Rainy', 'Cloudy'];
+    setWeather(weatherConditions[Math.floor(Math.random() * weatherConditions.length)]);
+
     return () => clearInterval(interval);
   }, []);
+
+  const getWeatherIcon = () => {
+    switch (weather) {
+      case 'Rainy': return <CloudRain size={24} color="#4A90E2" />;
+      case 'Cloudy': return <Cloud size={24} color="#9B9B9B" />;
+      default: return <Sun size={24} color="#F5A623" />;
+    }
+  };
+
+  const getWeatherSuggestion = () => {
+    switch (weather) {
+      case 'Rainy':
+        return "It's raining. Consider using public transport instead of driving to reduce emissions safely.";
+      case 'Cloudy':
+        return "Cooler weather today. Perfect for a brisk walk or hike to your destination!";
+      default:
+        return "It's a sunny day! Great time to bike or walk and soak up some Vitamin D while saving CO₂.";
+    }
+  };
 
   const selectedMode = profile?.activityMode || 'personal';
 
@@ -55,6 +81,18 @@ export default function HomeScreen({ navigation, route }: Props) {
         <View style={styles.avatar}>
            <Text style={styles.avatarText}>{profile?.fullName?.[0] ?? 'E'}</Text>
         </View>
+      </View>
+
+      {/* Weather AI Card */}
+      <View style={styles.weatherCard}>
+        <View style={styles.weatherInfo}>
+          {getWeatherIcon()}
+          <Text style={styles.weatherTemp}>{weather} • 22°C</Text>
+        </View>
+        <View style={styles.aiBadge}>
+          <Text style={styles.aiBadgeText}>AI Eco-Advisor</Text>
+        </View>
+        <Text style={styles.weatherAdvice}>{getWeatherSuggestion()}</Text>
       </View>
 
       {/* 3D-ish Dashboard Card */}
@@ -184,6 +222,51 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     color: '#344E41',
+  },
+  weatherCard: {
+    backgroundColor: '#fff',
+    borderRadius: 24,
+    padding: 16,
+    marginBottom: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+    position: 'relative',
+    overflow: 'hidden',
+  },
+  weatherInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: 12,
+  },
+  weatherTemp: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: '#344E41',
+  },
+  aiBadge: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    backgroundColor: '#E9EDC9',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+  },
+  aiBadgeText: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#588157',
+    textTransform: 'uppercase',
+  },
+  weatherAdvice: {
+    fontSize: 14,
+    color: '#588157',
+    lineHeight: 20,
+    fontWeight: '500',
   },
   mainDashboard: {
     borderRadius: 28,

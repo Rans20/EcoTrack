@@ -21,6 +21,7 @@ export default function MapScreen({ navigation }: Props) {
   const [loading, setLoading] = useState(true);
   const [routeType, setRouteType] = useState<'walking' | 'driving' | 'biking'>('biking');
   const [routeSuggestion, setRouteSuggestion] = useState<RouteSuggestion | null>(null);
+  const [routeType, setRouteType] = useState<'walking' | 'driving' | 'hiking'>('walking');
 
   useEffect(() => {
     (async () => {
@@ -46,7 +47,7 @@ export default function MapScreen({ navigation }: Props) {
   const routeColors = {
     walking: '#A3B18A',
     driving: '#344E41',
-    biking: '#588157',
+    hiking: '#588157',
   };
 
   return (
@@ -79,7 +80,7 @@ export default function MapScreen({ navigation }: Props) {
                 { latitude: region.latitude + 0.002, longitude: region.longitude + 0.002 },
                 { latitude: region.latitude + 0.004, longitude: region.longitude + 0.001 },
               ]}
-              strokeColor={routeColors[routeType]}
+              strokeColor={routeColors[routeType] || '#588157'}
               strokeWidth={4}
             />
           </MapView>
@@ -93,7 +94,7 @@ export default function MapScreen({ navigation }: Props) {
 
           <View style={styles.bottomPanel}>
             <View style={styles.typeSelector}>
-              {(['walking', 'biking', 'driving'] as const).map((t) => (
+              {(['driving', 'hiking', 'walking'] as const).map((t) => (
                 <Pressable
                   key={t}
                   onPress={() => setRouteType(t)}
