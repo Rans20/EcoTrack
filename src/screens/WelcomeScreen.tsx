@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Leaf, ShieldCheck, Zap } from 'lucide-react-native';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
 import { activityModes } from '../constants';
 import type { RootStackParamList } from '../types';
 
@@ -10,97 +11,146 @@ export default function WelcomeScreen({ navigation }: Props) {
   const [selectedMode, setSelectedMode] = useState(activityModes[0].value);
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Welcome to EcoTrack</Text>
-      <Text style={styles.subtitle}>
-        Choose how you want to track carbon emissions and build a profile for smarter sustainability.
-      </Text>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+           <Leaf size={80} color="#4A6741" strokeWidth={1.5} />
+           <View style={styles.blob} />
+        </View>
 
-      <View style={styles.optionList}>
-        {activityModes.map((mode, index) => (
+        <View style={styles.content}>
+          <Text style={styles.title}>Small Steps, Big Impact</Text>
+          <Text style={styles.subtitle}>
+            Join thousands of eco-conscious users tracking their daily habits to build a greener future.
+          </Text>
+
+          <View style={styles.habitTrackingSection}>
+            <View style={styles.habitCard}>
+              <Zap size={24} color="#D4A373" />
+              <Text style={styles.habitText}>Track energy & transport</Text>
+            </View>
+            <View style={styles.habitCard}>
+              <ShieldCheck size={24} color="#A3B18A" />
+              <Text style={styles.habitText}>Build sustainable habits</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={styles.footer}>
           <Pressable
-            key={mode.value}
-            onPress={() => setSelectedMode(mode.value)}
-            style={[styles.optionCard, index < activityModes.length - 1 && styles.optionCardSpacer, selectedMode === mode.value && styles.optionCardSelected]}
+            style={styles.primaryButton}
+            onPress={() => navigation.navigate('ProfileSetup', { selectedMode })}
           >
-            <Text style={[styles.optionLabel, selectedMode === mode.value && styles.optionLabelSelected]}>
-              {mode.label}
-            </Text>
+            <Text style={styles.primaryButtonText}>Get Started</Text>
           </Pressable>
-        ))}
+
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={() => {
+              console.log('Google Sign-In Pressed');
+              navigation.navigate('Home');
+            }}
+          >
+            <Text style={styles.secondaryButtonText}>Sign in with Google</Text>
+          </Pressable>
+        </View>
       </View>
-
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate('ProfileSetup', { selectedMode })}
-      >
-        <Text style={styles.buttonText}>Create Profile</Text>
-      </Pressable>
-
-      <Text style={styles.note}>
-        EcoTrack helps you track CO2 emissions for humans, cars, shipping, and more. Use the map to find shorter routes and stay ahead of traffic.
-      </Text>
-    </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#FAF9F6', // Off-white/Cream
+  },
   container: {
+    flex: 1,
     padding: 24,
-    backgroundColor: '#f3f9f2',
-    minHeight: '100%',
+    justifyContent: 'space-between',
+  },
+  imageContainer: {
+    alignItems: 'center',
+    marginTop: 60,
+    position: 'relative',
+  },
+  blob: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    backgroundColor: '#E9EDC9',
+    borderRadius: 60,
+    zIndex: -1,
+    top: -10,
+  },
+  content: {
+    marginTop: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: '700',
-    marginBottom: 12,
+    color: '#344E41', // Darker forest green
+    textAlign: 'center',
+    marginBottom: 16,
   },
   subtitle: {
     fontSize: 16,
-    marginBottom: 20,
-    color: '#3c5a4d',
+    color: '#588157',
+    textAlign: 'center',
+    lineHeight: 24,
+    marginBottom: 32,
   },
-  optionList: {
-    flexDirection: 'column',
-    marginBottom: 24,
+  habitTrackingSection: {
+    gap: 12,
   },
-  optionCardSpacer: {
-    marginBottom: 12,
-  },
-  optionCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 14,
-    padding: 18,
-    borderWidth: 1,
-    borderColor: '#d0e4d0',
-  },
-  optionCardSelected: {
-    backgroundColor: '#c8ebd0',
-    borderColor: '#6aa96b',
-  },
-  optionLabel: {
-    fontSize: 17,
-    fontWeight: '600',
-  },
-  optionLabelSelected: {
-    color: '#1f4f2f',
-  },
-  button: {
-    backgroundColor: '#286c47',
-    padding: 16,
-    borderRadius: 14,
+  habitCard: {
+    flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 20,
+    gap: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
-  buttonText: {
-    color: '#fff',
-    fontWeight: '700',
+  habitText: {
     fontSize: 16,
+    color: '#3A5A40',
+    fontWeight: '500',
   },
-  note: {
-    fontSize: 15,
-    color: '#2b4b33',
-    marginTop: 16,
-    lineHeight: 22,
+  footer: {
+    gap: 12,
+    marginBottom: 20,
+  },
+  primaryButton: {
+    backgroundColor: '#588157',
+    paddingVertical: 18,
+    borderRadius: 24,
+    alignItems: 'center',
+    shadowColor: '#588157',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  primaryButtonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  secondaryButton: {
+    paddingVertical: 18,
+    borderRadius: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#DAD7CD',
+  },
+  secondaryButtonText: {
+    color: '#3A5A40',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });

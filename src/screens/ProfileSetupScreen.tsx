@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Picker } from '@react-native-picker/picker';
 import * as ImagePicker from 'expo-image-picker';
+import { Camera, ChevronRight, User } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import {
   Image,
@@ -13,14 +14,14 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { activityModes, engineSizes, industries } from '../constants';
+import { engineSizes, industries } from '../constants';
 import { saveUserProfile } from '../storage';
-import type { ActivityMode, EngineSize, Industry, UserProfile, RootStackParamList } from '../types';
+import type { EngineSize, Industry, UserProfile, RootStackParamList } from '../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'ProfileSetup'>;
 
 function generateUniqueId(): string {
-  return `ecotrack-${Date.now()}-${Math.floor(Math.random() * 100000)}`;
+  return `eco-${Math.random().toString(36).substr(2, 9)}`;
 }
 
 export default function ProfileSetupScreen({ route, navigation }: Props) {
@@ -52,9 +53,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
   }
 
   async function handleSubmit() {
-    if (!fullName || !country || !city || !heightCm || !weightKg) {
-      return;
-    }
+    if (!fullName || !country || !city) return;
 
     const profile: UserProfile = {
       id: generateUniqueId(),
@@ -76,83 +75,121 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-      <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.header}>Create your EcoTrack profile</Text>
+      <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+        <Text style={styles.header}>Personalize Your Journey</Text>
         <Text style={styles.description}>
-          Complete the profile below to receive tailored CO₂ recommendations for your selected mode: {selectedMode}.
+          We use this data to calculate your precise carbon impact and suggest the best habits for you.
         </Text>
 
-        <Pressable style={styles.photoUpload} onPress={pickImage}>
-          {photoUri ? (
-            <Image source={{ uri: photoUri }} style={styles.photo} />
-          ) : (
-            <Text style={styles.photoText}>Upload Profile Picture</Text>
-          )}
-        </Pressable>
-
-        <View style={styles.fieldGroup}>
-          <Text style={styles.label}>Full Name</Text>
-          <TextInput style={styles.input} value={fullName} onChangeText={setFullName} placeholder="Jane Doe" />
+        <View style={styles.avatarSection}>
+          <Pressable style={styles.photoUpload} onPress={pickImage}>
+            {photoUri ? (
+              <Image source={{ uri: photoUri }} style={styles.photo} />
+            ) : (
+              <View style={styles.photoPlaceholder}>
+                <User size={40} color="#A3B18A" />
+              </View>
+            )}
+            <View style={styles.cameraIcon}>
+              <Camera size={16} color="#fff" />
+            </View>
+          </Pressable>
         </View>
 
-        <View style={styles.fieldRow}>
-          <View style={[styles.fieldHalf, styles.fieldRightPadding]}>
-            <Text style={styles.label}>Height (cm)</Text>
+        <View style={styles.form}>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Full Name</Text>
             <TextInput
-              keyboardType="numeric"
               style={styles.input}
-              value={heightCm}
-              onChangeText={setHeightCm}
-              placeholder="170"
+              value={fullName}
+              onChangeText={setFullName}
+              placeholder="Enter your name"
+              placeholderTextColor="#A3B18A"
             />
           </View>
-          <View style={styles.fieldHalf}>
-            <Text style={styles.label}>Weight (kg)</Text>
-            <TextInput
-              keyboardType="numeric"
-              style={styles.input}
-              value={weightKg}
-              onChangeText={setWeightKg}
-              placeholder="65"
-            />
+
+          <View style={styles.row}>
+            <View style={[styles.inputWrapper, { flex: 1, marginRight: 12 }]}>
+              <Text style={styles.label}>Height (cm)</Text>
+              <TextInput
+                keyboardType="numeric"
+                style={styles.input}
+                value={heightCm}
+                onChangeText={setHeightCm}
+                placeholder="175"
+                placeholderTextColor="#A3B18A"
+              />
+            </View>
+            <View style={[styles.inputWrapper, { flex: 1 }]}>
+              <Text style={styles.label}>Weight (kg)</Text>
+              <TextInput
+                keyboardType="numeric"
+                style={styles.input}
+                value={weightKg}
+                onChangeText={setWeightKg}
+                placeholder="70"
+                placeholderTextColor="#A3B18A"
+              />
+            </View>
+          </View>
+
+          <View style={styles.row}>
+            <View style={[styles.inputWrapper, { flex: 1, marginRight: 12 }]}>
+              <Text style={styles.label}>Country</Text>
+              <TextInput
+                style={styles.input}
+                value={country}
+                onChangeText={setCountry}
+                placeholder="e.g. USA"
+                placeholderTextColor="#A3B18A"
+              />
+            </View>
+            <View style={[styles.inputWrapper, { flex: 1 }]}>
+              <Text style={styles.label}>City</Text>
+              <TextInput
+                style={styles.input}
+                value={city}
+                onChangeText={setCity}
+                placeholder="e.g. NY"
+                placeholderTextColor="#A3B18A"
+              />
+            </View>
+          </View>
+
+          <View style={styles.pickerWrapper}>
+            <Text style={styles.label}>Vehicle Engine</Text>
+            <View style={styles.pickerBox}>
+              <Picker
+                selectedValue={carEngineSize}
+                onValueChange={(v) => setCarEngineSize(v as EngineSize)}
+                style={styles.picker}
+              >
+                {engineSizes.map((size) => (
+                  <Picker.Item key={size} label={size} value={size} color="#344E41" />
+                ))}
+              </Picker>
+            </View>
+          </View>
+
+          <View style={styles.pickerWrapper}>
+            <Text style={styles.label}>Industry</Text>
+            <View style={styles.pickerBox}>
+              <Picker
+                selectedValue={industry}
+                onValueChange={(v) => setIndustry(v as Industry)}
+                style={styles.picker}
+              >
+                {industries.map((opt) => (
+                  <Picker.Item key={opt} label={opt} value={opt} color="#344E41" />
+                ))}
+              </Picker>
+            </View>
           </View>
         </View>
 
-        <View style={styles.fieldRow}>
-          <View style={styles.fieldHalf}>
-            <Text style={styles.label}>Country</Text>
-            <TextInput style={styles.input} value={country} onChangeText={setCountry} placeholder="Spain" />
-          </View>
-          <View style={styles.fieldHalf}>
-            <Text style={styles.label}>City</Text>
-            <TextInput style={styles.input} value={city} onChangeText={setCity} placeholder="Barcelona" />
-          </View>
-        </View>
-
-        <View style={styles.pickerGroup}>
-          <Text style={styles.label}>Car Engine Size</Text>
-          <View style={styles.pickerBox}>
-            <Picker selectedValue={carEngineSize} onValueChange={(value) => setCarEngineSize(value as EngineSize)}>
-              {engineSizes.map((size) => (
-                <Picker.Item key={size} label={size} value={size} />
-              ))}
-            </Picker>
-          </View>
-        </View>
-
-        <View style={styles.pickerGroup}>
-          <Text style={styles.label}>Industry</Text>
-          <View style={styles.pickerBox}>
-            <Picker selectedValue={industry} onValueChange={(value) => setIndustry(value as Industry)}>
-              {industries.map((option) => (
-                <Picker.Item key={option} label={option} value={option} />
-              ))}
-            </Picker>
-          </View>
-        </View>
-
-        <Pressable style={styles.button} onPress={handleSubmit}>
-          <Text style={styles.buttonText}>Save Profile & Continue</Text>
+        <Pressable style={styles.submitButton} onPress={handleSubmit}>
+          <Text style={styles.submitButtonText}>Create My Profile</Text>
+          <ChevronRight size={20} color="#fff" />
         </Pressable>
       </ScrollView>
     </KeyboardAvoidingView>
@@ -161,80 +198,128 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 22,
-    backgroundColor: '#eef7ee',
-    minHeight: '100%',
+    flex: 1,
+    backgroundColor: '#FAF9F6',
+  },
+  content: {
+    padding: 24,
+    paddingBottom: 60,
   },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
-    marginBottom: 12,
-  },
-  description: {
-    lineHeight: 22,
-    color: '#3b4f3d',
-    marginBottom: 24,
-  },
-  photoUpload: {
-    backgroundColor: '#dcead7',
-    borderRadius: 16,
-    height: 140,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 22,
-  },
-  photoText: {
-    color: '#3c5a47',
-    fontWeight: '600',
-  },
-  photo: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-  },
-  fieldGroup: {
-    marginBottom: 18,
-  },
-  fieldRow: {
-    flexDirection: 'row',
-    marginBottom: 18,
-  },
-  fieldRightPadding: {
-    marginRight: 14,
-  },
-  fieldHalf: {
-    flex: 1,
-  },
-  label: {
-    fontWeight: '700',
+    color: '#344E41',
     marginBottom: 8,
   },
-  input: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
-    borderWidth: 1,
-    borderColor: '#c8d7c5',
+  description: {
+    fontSize: 15,
+    color: '#588157',
+    lineHeight: 22,
+    marginBottom: 32,
   },
-  pickerGroup: {
-    marginBottom: 18,
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  photoUpload: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#E9EDC9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'relative',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  },
+  photo: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+  },
+  photoPlaceholder: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#CCD5AE',
+    borderStyle: 'dashed',
+  },
+  cameraIcon: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#344E41',
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 3,
+    borderColor: '#FAF9F6',
+  },
+  form: {
+    gap: 20,
+    marginBottom: 40,
+  },
+  inputWrapper: {
+    gap: 8,
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#344E41',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    fontSize: 16,
+    color: '#344E41',
+    borderWidth: 1,
+    borderColor: '#DAD7CD',
+  },
+  row: {
+    flexDirection: 'row',
+  },
+  pickerWrapper: {
+    gap: 8,
   },
   pickerBox: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
+    backgroundColor: '#fff',
+    borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#c8d7c5',
+    borderColor: '#DAD7CD',
+    overflow: 'hidden',
   },
-  button: {
-    backgroundColor: '#2f6d47',
-    paddingVertical: 16,
-    borderRadius: 14,
+  picker: {
+    height: 50,
+    width: '100%',
+  },
+  submitButton: {
+    backgroundColor: '#588157',
+    flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 12,
+    justifyContent: 'center',
+    paddingVertical: 18,
+    borderRadius: 24,
+    gap: 12,
+    shadowColor: '#588157',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
   },
-  buttonText: {
+  submitButtonText: {
     color: '#fff',
+    fontSize: 18,
     fontWeight: '700',
   },
 });

@@ -6,6 +6,7 @@ import LeaderboardScreen from '../screens/LeaderboardScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
+import AnalyticsScreen from '../screens/AnalyticsScreen';
 import type { RootStackParamList } from '../types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -17,7 +18,7 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
-          options={{ title: 'EcoTrack' }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="ProfileSetup"
@@ -27,12 +28,17 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-          options={{ title: 'Dashboard' }}
+          options={{ headerShown: false }}
         />
         <Stack.Screen
           name="Map"
           component={MapScreen}
           options={{ title: 'Route & Traffic Map' }}
+        />
+        <Stack.Screen
+          name="Analytics"
+          component={AnalyticsScreen}
+          options={{ title: 'Eco Analytics', headerStyle: { backgroundColor: '#050a05' }, headerTintColor: '#fff' }}
         />
         <Stack.Screen
           name="Leaderboard"

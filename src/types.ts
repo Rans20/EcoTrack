@@ -21,5 +21,6 @@ export type RootStackParamList = {
   ProfileSetup: { selectedMode: ActivityMode };
   Home: { profile?: UserProfile } | undefined;
   Map: undefined;
+  Analytics: undefined;
   Leaderboard: undefined;
 };
