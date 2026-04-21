@@ -59,8 +59,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Impact Leaders', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, color: const Color(0xFF1A237E))),
-                      Text('Top eco-warriors globally', style: theme.textTheme.bodyMedium?.copyWith(color: const Color(0xFF00BFA5), fontWeight: FontWeight.w600)),
+                      Text('Impact Leaders', style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800, color: theme.colorScheme.primary)),
+                      Text('Top eco-warriors globally', style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.secondary, fontWeight: FontWeight.w600)),
                     ],
                   ),
                 ],
@@ -95,14 +95,14 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('Global Rankings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF1A237E))),
+                          Text('Global Rankings', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: theme.colorScheme.primary)),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: const Color(0xFFE0F2F1),
+                              color: theme.colorScheme.secondary.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Text('This Week', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Color(0xFF00BFA5))),
+                            child: Text('This Week', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: theme.colorScheme.secondary)),
                           ),
                         ],
                       ),
@@ -154,10 +154,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
       ),
       child: Column(
         children: [
-          Icon(icon, color: const Color(0xFF2D6A4F), size: 20),
+          Icon(icon, color: Theme.of(context).colorScheme.secondary, size: 20),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF1A237E))),
-          Text(label, style: const TextStyle(fontSize: 10, color: Color(0xFF00BFA5), fontWeight: FontWeight.w700, letterSpacing: 0.5)),
+          Text(value, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.primary)),
+          Text(label, style: TextStyle(fontSize: 10, color: Theme.of(context).colorScheme.secondary, fontWeight: FontWeight.w700, letterSpacing: 0.5)),
         ],
       ),
     );
@@ -189,15 +189,15 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item['full_name'] ?? 'Anonymous', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Color(0xFF1A237E))),
-                Text('${_formatLocation(item)} — ${item['activity_mode'] ?? 'personal'}', style: const TextStyle(color: Color(0xFF00BFA5), fontSize: 12, fontWeight: FontWeight.w500)),
+                Text(item['full_name'] ?? 'Anonymous', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: Theme.of(context).colorScheme.primary)),
+                Text('${_formatLocation(item)} — ${item['activity_mode'] ?? 'personal'}', style: TextStyle(color: Theme.of(context).colorScheme.secondary, fontSize: 12, fontWeight: FontWeight.w500)),
               ],
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text('${(item['total_co2_kg'] ?? 0.0).toStringAsFixed(1)}', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF00BFA5))),
+              Text('${(item['total_co2_kg'] ?? 0.0).toStringAsFixed(1)}', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Theme.of(context).colorScheme.secondary)),
               const Text('KG', style: TextStyle(fontSize: 10, color: Color(0xFF546E7A), fontWeight: FontWeight.w700)),
             ],
           ),

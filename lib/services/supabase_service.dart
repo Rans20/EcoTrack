@@ -44,7 +44,11 @@ class SupabaseService {
         .eq('user_id', user.id)
         .gte('started_at', since);
 
-    return data.fold(0.0, (sum, row) => sum + (row['co2_kg'] ?? 0.0).toDouble());
+    double total = 0.0;
+    for (var row in data) {
+      total += (row['co2_kg'] ?? 0.0).toDouble();
+    }
+    return total;
   }
 
   Future<List<Map<String, dynamic>>> fetchLeaderboard({int limit = 20}) async {
