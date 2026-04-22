@@ -2,6 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Leaf, ShieldCheck, Zap, Globe, Sparkles } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Pressable, SafeAreaView, StyleSheet, Text, View, Image } from 'react-native';
+import { COLORS } from '../constants';
 import { signInWithGoogle } from '../lib/auth';
 import { fetchActivityModes } from '../storage';
 import type { ActivityMode, RootStackParamList } from '../types';
@@ -87,7 +88,7 @@ export default function WelcomeScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F7FBF7',
+    backgroundColor: COLORS.background,
   },
   container: {
     flex: 1,
@@ -108,13 +109,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 34,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
     textAlign: 'center',
     marginBottom: 12,
   },
   subtitle: {
     fontSize: 16,
-    color: '#409167',
+    color: COLORS.primary,
     textAlign: 'center',
     lineHeight: 24,
     marginBottom: 40,
@@ -130,13 +131,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 28,
     gap: 16,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,
     shadowRadius: 15,
     elevation: 4,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   iconBox: {
     width: 48,
@@ -148,11 +149,11 @@ const styles = StyleSheet.create({
   habitTitle: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   habitText: {
     fontSize: 14,
-    color: '#52B788',
+    color: COLORS.secondary,
     fontWeight: '500',
     marginTop: 2,
   },
@@ -161,11 +162,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   primaryButton: {
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
     paddingVertical: 20,
     borderRadius: 24,
     alignItems: 'center',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.25,
     shadowRadius: 15,
@@ -181,11 +182,11 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#D8F3DC',
-    backgroundColor: '#fff',
+    borderColor: COLORS.primaryTransparent,
+    backgroundColor: COLORS.white,
   },
   secondaryButtonText: {
-    color: '#2D6A4F',
+    color: COLORS.primary,
     fontSize: 16,
     fontWeight: '700',
   },

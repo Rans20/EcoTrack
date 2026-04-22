@@ -4,6 +4,7 @@ import { Navigation, Compass, Info, Leaf } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View, Dimensions, ActivityIndicator } from 'react-native';
 import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { COLORS } from '../constants';
 import { fetchRouteSuggestions, type RouteSuggestion } from '../storage';
 import type { RootStackParamList } from '../types';
 
@@ -44,9 +45,9 @@ export default function MapScreen({ navigation }: Props) {
   }, []);
 
   const routeColors = {
-    walking: '#95D5B2',
-    driving: '#1B4332',
-    hiking: '#2D6A4F',
+    walking: COLORS.secondary,
+    driving: COLORS.dark,
+    hiking: COLORS.primary,
   };
 
   return (
@@ -86,7 +87,7 @@ export default function MapScreen({ navigation }: Props) {
 
           <View style={styles.topOverlay}>
             <View style={styles.searchBar}>
-              <Navigation size={20} color="#588157" />
+              <Navigation size={20} color={COLORS.primary} />
               <Text style={styles.searchText}>Searching for low-emission paths...</Text>
             </View>
           </View>
@@ -108,7 +109,7 @@ export default function MapScreen({ navigation }: Props) {
 
             <View style={styles.suggestionBox}>
               <View style={styles.suggestionHeader}>
-                <Leaf size={20} color="#588157" />
+                <Leaf size={20} color={COLORS.primary} />
                 <Text style={styles.suggestionTitle}>Optimal Route Found</Text>
               </View>
               <Text style={styles.suggestionMain}>
@@ -133,35 +134,35 @@ const mapStyle = [
   {
     "featureType": "all",
     "elementType": "labels.text.fill",
-    "stylers": [{ "color": "#1B4332" }]
+    "stylers": [{ "color": "#1A2130" }]
   },
   {
     "featureType": "water",
     "elementType": "geometry",
-    "stylers": [{ "color": "#D8F3DC" }]
+    "stylers": [{ "color": "#E0F2F1" }]
   },
   {
     "featureType": "landscape",
     "elementType": "geometry",
-    "stylers": [{ "color": "#F7FBF7" }]
+    "stylers": [{ "color": "#F8FBFB" }]
   },
   {
     "featureType": "poi.park",
     "elementType": "geometry",
-    "stylers": [{ "color": "#B7E4C7" }]
+    "stylers": [{ "color": "#D1E7D1" }]
   }
 ];
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F7FBF7' },
+  container: { flex: 1, backgroundColor: COLORS.background },
   loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loaderText: { marginTop: 16, color: '#2D6A4F', fontWeight: '800' },
+  loaderText: { marginTop: 16, color: COLORS.primary, fontWeight: '800' },
   map: { width, height },
   userMarker: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: 'rgba(45, 106, 79, 0.2)',
+    backgroundColor: COLORS.primaryTransparent,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -169,9 +170,9 @@ const styles = StyleSheet.create({
     width: 14,
     height: 14,
     borderRadius: 7,
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
     borderWidth: 3,
-    borderColor: '#fff',
+    borderColor: COLORS.white,
   },
   topOverlay: {
     position: 'absolute',
@@ -180,20 +181,20 @@ const styles = StyleSheet.create({
     right: 20,
   },
   searchBar: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     flexDirection: 'row',
     alignItems: 'center',
     padding: 16,
     borderRadius: 20,
     gap: 12,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.1,
     shadowRadius: 15,
     elevation: 8,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
-  searchText: { color: '#95D5B2', fontSize: 15, fontWeight: '500' },
+  searchText: { color: COLORS.gray, fontSize: 15, fontWeight: '500' },
   bottomPanel: {
     position: 'absolute',
     bottom: 100, // Adjusted for new tab bar height
@@ -207,7 +208,7 @@ const styles = StyleSheet.create({
     padding: 8,
     marginBottom: 16,
     gap: 8,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 5,
@@ -219,26 +220,26 @@ const styles = StyleSheet.create({
     borderRadius: 18,
   },
   typeBtnActive: {
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
   },
   typeBtnText: {
     fontSize: 14,
     fontWeight: '700',
-    color: '#2D6A4F',
+    color: COLORS.primary,
   },
   typeBtnTextActive: {
-    color: '#fff',
+    color: COLORS.white,
   },
   suggestionBox: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 32,
     padding: 24,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.15,
     shadowRadius: 20,
     elevation: 12,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   suggestionHeader: {
     flexDirection: 'row',
@@ -249,28 +250,28 @@ const styles = StyleSheet.create({
   suggestionTitle: {
     fontSize: 12,
     fontWeight: '900',
-    color: '#409167',
+    color: COLORS.primary,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   suggestionMain: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
     marginBottom: 6,
   },
   suggestionSub: {
     fontSize: 15,
-    color: '#52B788',
+    color: COLORS.secondary,
     marginBottom: 20,
     fontWeight: '500',
   },
   goButton: {
-    backgroundColor: '#1B4332',
+    backgroundColor: COLORS.dark,
     paddingVertical: 18,
     borderRadius: 20,
     alignItems: 'center',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,

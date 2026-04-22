@@ -12,6 +12,7 @@ import LeaderboardScreen from '../screens/LeaderboardScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileSetupScreen from '../screens/ProfileSetupScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
+import { COLORS } from '../constants';
 import { getCurrentUserProfile } from '../storage';
 import type { RootStackParamList } from '../types';
 
@@ -28,7 +29,7 @@ function Icon3D({ children, color, focused }: { children: React.ReactNode, color
       <View style={{
         padding: 8,
         borderRadius: 12,
-        backgroundColor: focused ? '#E8F5E9' : 'transparent',
+        backgroundColor: focused ? COLORS.primaryTransparent : 'transparent',
         shadowColor: color,
         shadowOffset: { width: 0, height: focused ? 4 : 0 },
         shadowOpacity: focused ? 0.3 : 0,
@@ -56,10 +57,10 @@ function TabNavigator() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: COLORS.white,
           borderTopWidth: 0,
           elevation: 20,
-          shadowColor: '#2D6A4F',
+          shadowColor: COLORS.dark,
           shadowOpacity: 0.1,
           shadowRadius: 20,
           height: 85,
@@ -69,8 +70,8 @@ function TabNavigator() {
           borderTopRightRadius: 30,
           position: 'absolute',
         },
-        tabBarActiveTintColor: '#2D6A4F',
-        tabBarInactiveTintColor: '#A3B18A',
+        tabBarActiveTintColor: COLORS.primary,
+        tabBarInactiveTintColor: COLORS.gray,
         tabBarShowLabel: true,
         tabBarLabelStyle: {
           fontSize: 11,
@@ -154,14 +155,14 @@ export default function AppNavigator() {
 
   if (!booted || (session && hasProfile === null)) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#FFFFFF' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: COLORS.white }}>
         <View style={{ alignItems: 'center' }}>
           <Image
             source={require('../../assets/splash-icon.png')}
             style={{ width: 280, height: 180, marginBottom: 40 }}
             resizeMode="contain"
           />
-          <ActivityIndicator size="large" color="#2D6A4F" />
+          <ActivityIndicator size="large" color={COLORS.primary} />
         </View>
       </View>
     );

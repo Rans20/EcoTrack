@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Dimensions, ScrollView, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
 import { LineChart, BarChart } from 'react-native-chart-kit';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { COLORS } from '../constants';
 import { supabase } from '../lib/supabase';
 import type { RootStackParamList } from '../types';
 
@@ -90,37 +91,37 @@ export default function AnalyticsScreen({ navigation }: Props) {
     datasets: [
       {
         data: monthly.map(b => b.co2 || 0),
-        color: (opacity = 1) => `rgba(45, 106, 79, ${opacity})`,
+        color: (opacity = 1) => `rgba(0, 168, 150, ${opacity})`,
         strokeWidth: 3,
       },
     ],
   };
 
   const chartConfig = {
-    backgroundColor: '#ffffff',
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
+    backgroundColor: COLORS.white,
+    backgroundGradientFrom: COLORS.white,
+    backgroundGradientTo: COLORS.white,
     decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(45, 106, 79, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(27, 67, 50, ${opacity})`,
+    color: (opacity = 1) => `rgba(0, 168, 150, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(26, 33, 48, ${opacity})`,
     style: {
       borderRadius: 16,
     },
     propsForDots: {
       r: '6',
       strokeWidth: '3',
-      stroke: '#409167',
+      stroke: COLORS.primary,
     },
     propsForBackgroundLines: {
       strokeDasharray: '',
-      stroke: '#F0F7F0',
+      stroke: COLORS.lightGray,
     }
   };
 
   if (loading) {
     return (
       <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color="#2D6A4F" />
+        <ActivityIndicator size="large" color={COLORS.primary} />
       </View>
     );
   }
@@ -141,15 +142,15 @@ export default function AnalyticsScreen({ navigation }: Props) {
 
       <View style={styles.statsRow}>
         <View style={styles.statBox}>
-          <View style={[styles.miniIcon, { backgroundColor: '#E8F5E9' }]}>
-            <TrendingUp size={18} color="#2D6A4F" />
+          <View style={[styles.miniIcon, { backgroundColor: COLORS.primaryTransparent }]}>
+            <TrendingUp size={18} color={COLORS.primary} />
           </View>
           <Text style={styles.statValue}>{avgPerDay.toFixed(1)}</Text>
           <Text style={styles.statLabel}>Avg kg/day</Text>
         </View>
         <View style={styles.statBox}>
-          <View style={[styles.miniIcon, { backgroundColor: '#F1F8E9' }]}>
-            <Leaf size={18} color="#558B2F" />
+          <View style={[styles.miniIcon, { backgroundColor: 'rgba(128, 185, 24, 0.1)' }]}>
+            <Leaf size={18} color={COLORS.secondary} />
           </View>
           <Text style={styles.statValue}>{totalCo2.toFixed(1)}</Text>
           <Text style={styles.statLabel}>Total kg (6mo)</Text>
@@ -221,7 +222,7 @@ export default function AnalyticsScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7FBF7',
+    backgroundColor: COLORS.background,
   },
   header: {
     padding: 24,
@@ -237,10 +238,10 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 20,
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.primary,
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 8,
@@ -248,25 +249,25 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   subtitle: {
     fontSize: 14,
-    color: '#52B788',
+    color: COLORS.primary,
     fontWeight: '600',
   },
   chartCard: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     marginHorizontal: 20,
     marginBottom: 24,
     borderRadius: 32,
     padding: 20,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   chartHeader: {
     flexDirection: 'row',
@@ -277,7 +278,7 @@ const styles = StyleSheet.create({
   chartTitle: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   chart: {
     borderRadius: 16,
@@ -292,16 +293,16 @@ const styles = StyleSheet.create({
   },
   statBox: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 28,
     padding: 20,
     alignItems: 'center',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.08,
     shadowRadius: 15,
     elevation: 3,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   miniIcon: {
     width: 36,
@@ -314,11 +315,11 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 24,
     fontWeight: '900',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   statLabel: {
     fontSize: 12,
-    color: '#74C69D',
+    color: COLORS.primary,
     marginTop: 2,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -326,14 +327,14 @@ const styles = StyleSheet.create({
   comparisonPanel: {
     marginHorizontal: 20,
     padding: 24,
-    backgroundColor: '#D8F3DC',
+    backgroundColor: COLORS.primaryTransparent,
     borderRadius: 32,
     marginBottom: 40,
     borderWidth: 1,
-    borderColor: '#B7E4C7',
+    borderColor: COLORS.primary,
   },
   badge: {
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
     paddingVertical: 4,
@@ -347,19 +348,19 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   comparisonTitle: {
-    color: '#1B4332',
+    color: COLORS.dark,
     fontSize: 20,
     fontWeight: '800',
     marginBottom: 8,
   },
   comparisonText: {
-    color: '#409167',
+    color: COLORS.secondary,
     lineHeight: 22,
     fontSize: 15,
     fontWeight: '500',
   },
   highlight: {
-    color: '#1B4332',
+    color: COLORS.primary,
     fontWeight: '900',
   },
 });

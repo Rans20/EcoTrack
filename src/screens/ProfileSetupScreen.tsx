@@ -14,6 +14,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { COLORS } from '../constants';
 import { fetchEngineSizes, fetchIndustries, upsertUserProfile } from '../storage';
 import type { EngineSize, Industry, RootStackParamList } from '../types';
 
@@ -99,7 +100,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
               <Image source={{ uri: photoUri }} style={styles.photo} />
             ) : (
               <View style={styles.photoPlaceholder}>
-                <User size={40} color="#A3B18A" />
+                <User size={40} color={COLORS.gray} />
               </View>
             )}
             <View style={styles.cameraIcon}>
@@ -116,7 +117,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
               value={fullName}
               onChangeText={setFullName}
               placeholder="Enter your name"
-              placeholderTextColor="#A3B18A"
+              placeholderTextColor={COLORS.gray}
             />
           </View>
 
@@ -129,7 +130,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
                 value={heightCm}
                 onChangeText={setHeightCm}
                 placeholder="175"
-                placeholderTextColor="#A3B18A"
+                placeholderTextColor={COLORS.gray}
               />
             </View>
             <View style={[styles.inputWrapper, { flex: 1 }]}>
@@ -140,7 +141,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
                 value={weightKg}
                 onChangeText={setWeightKg}
                 placeholder="70"
-                placeholderTextColor="#A3B18A"
+                placeholderTextColor={COLORS.gray}
               />
             </View>
           </View>
@@ -153,7 +154,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
                 value={country}
                 onChangeText={setCountry}
                 placeholder="e.g. USA"
-                placeholderTextColor="#A3B18A"
+                placeholderTextColor={COLORS.gray}
               />
             </View>
             <View style={[styles.inputWrapper, { flex: 1 }]}>
@@ -163,7 +164,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
                 value={city}
                 onChangeText={setCity}
                 placeholder="e.g. NY"
-                placeholderTextColor="#A3B18A"
+                placeholderTextColor={COLORS.gray}
               />
             </View>
           </View>
@@ -177,7 +178,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
                 style={styles.picker}
               >
                 {engineSizes.map((size) => (
-                  <Picker.Item key={size} label={size} value={size} color="#344E41" />
+                  <Picker.Item key={size} label={size} value={size} color={COLORS.dark} />
                 ))}
               </Picker>
             </View>
@@ -211,7 +212,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7FBF7',
+    backgroundColor: COLORS.background,
   },
   content: {
     padding: 24,
@@ -221,12 +222,12 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 28,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
     marginBottom: 8,
   },
   description: {
     fontSize: 15,
-    color: '#409167',
+    color: COLORS.secondary,
     lineHeight: 22,
     marginBottom: 32,
     fontWeight: '500',
@@ -239,16 +240,16 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 40,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.1,
     shadowRadius: 15,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   photo: {
     width: 120,
@@ -262,22 +263,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#D8F3DC',
+    borderColor: COLORS.primaryTransparent,
     borderStyle: 'dashed',
-    backgroundColor: '#F7FBF7',
+    backgroundColor: COLORS.background,
   },
   cameraIcon: {
     position: 'absolute',
     bottom: -5,
     right: -5,
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
     width: 40,
     height: 40,
     borderRadius: 14,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 4,
-    borderColor: '#F7FBF7',
+    borderColor: COLORS.background,
     shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 5,
@@ -293,20 +294,20 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 13,
     fontWeight: '800',
-    color: '#2D6A4F',
+    color: COLORS.primary,
     textTransform: 'uppercase',
     letterSpacing: 1.2,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 20,
     paddingHorizontal: 20,
     paddingVertical: 16,
     fontSize: 16,
-    color: '#1B4332',
+    color: COLORS.dark,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
-    shadowColor: '#1B4332',
+    borderColor: COLORS.lightGray,
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.03,
     shadowRadius: 10,
     elevation: 1,
@@ -319,12 +320,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   pickerBox: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
     overflow: 'hidden',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.03,
     shadowRadius: 10,
     elevation: 1,
@@ -334,14 +335,14 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   submitButton: {
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 20,
     borderRadius: 24,
     gap: 12,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.25,
     shadowRadius: 15,

@@ -1,6 +1,7 @@
 import { Medal, Trophy, Users, Award } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { COLORS } from '../constants';
 import { fetchLeaderboard, type LeaderboardEntry } from '../storage';
 import type { RootStackParamList } from '../types';
 
@@ -38,7 +39,7 @@ export default function LeaderboardScreen({ navigation }: Props) {
 
       <View style={styles.statsOverview}>
         <View style={styles.miniStat}>
-          <Users size={20} color="#2D6A4F" />
+          <Users size={20} color={COLORS.primary} />
           <Text style={styles.miniStatValue}>1.2k</Text>
           <Text style={styles.miniStatLabel}>Active</Text>
         </View>
@@ -60,7 +61,7 @@ export default function LeaderboardScreen({ navigation }: Props) {
           <Text style={styles.seeAll}>This Week</Text>
         </View>
         {loading ? (
-          <ActivityIndicator color="#2D6A4F" style={{ marginVertical: 40 }} />
+          <ActivityIndicator color={COLORS.primary} style={{ marginVertical: 40 }} />
         ) : entries.length === 0 ? (
           <Text style={styles.empty}>No activity yet. Log a journey to appear here.</Text>
         ) : (
@@ -93,7 +94,7 @@ export default function LeaderboardScreen({ navigation }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7FBF7',
+    backgroundColor: COLORS.background,
     padding: 20,
     paddingTop: 60,
   },
@@ -107,10 +108,10 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 20,
-    backgroundColor: '#2D6A4F',
+    backgroundColor: COLORS.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.primary,
     shadowOpacity: 0.3,
     shadowRadius: 10,
     elevation: 8,
@@ -118,11 +119,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   subtitle: {
     fontSize: 14,
-    color: '#52B788',
+    color: COLORS.primary,
     fontWeight: '600',
   },
   statsOverview: {
@@ -132,40 +133,40 @@ const styles = StyleSheet.create({
   },
   miniStat: {
     width: '31%',
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 20,
     padding: 12,
     alignItems: 'center',
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.05,
     shadowRadius: 10,
     elevation: 2,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   miniStatValue: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
     marginTop: 4,
   },
   miniStatLabel: {
     fontSize: 10,
-    color: '#95D5B2',
+    color: COLORS.gray,
     textTransform: 'uppercase',
     fontWeight: '700',
   },
   section: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: COLORS.white,
     borderRadius: 32,
     padding: 24,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.1,
     shadowRadius: 20,
     elevation: 5,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -176,19 +177,19 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   seeAll: {
     fontSize: 12,
     fontWeight: '700',
-    color: '#409167',
-    backgroundColor: '#D8F3DC',
+    color: COLORS.primary,
+    backgroundColor: COLORS.primaryTransparent,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 10,
   },
   empty: {
-    color: '#95D5B2',
+    color: COLORS.gray,
     textAlign: 'center',
     marginTop: 40,
     fontSize: 16,
@@ -199,10 +200,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F7F0',
+    borderBottomColor: COLORS.lightGray,
   },
   topRow: {
-    backgroundColor: '#F7FBF7',
+    backgroundColor: COLORS.background,
     borderRadius: 16,
     marginHorizontal: -8,
     paddingHorizontal: 8,
@@ -211,7 +212,7 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 10,
-    backgroundColor: '#F0F7F0',
+    backgroundColor: COLORS.lightGray,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 16,
@@ -222,7 +223,7 @@ const styles = StyleSheet.create({
   rankText: {
     fontSize: 14,
     fontWeight: '800',
-    color: '#409167',
+    color: COLORS.primary,
   },
   rankTextTop: {
     color: '#fff',
@@ -233,10 +234,10 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   detail: {
-    color: '#74C69D',
+    color: COLORS.secondary,
     fontSize: 12,
     marginTop: 2,
     fontWeight: '500',
@@ -247,11 +248,11 @@ const styles = StyleSheet.create({
   co2Value: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#2D6A4F',
+    color: COLORS.primary,
   },
   co2Unit: {
     fontSize: 10,
-    color: '#95D5B2',
+    color: COLORS.gray,
     fontWeight: '700',
     textTransform: 'uppercase',
   },

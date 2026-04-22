@@ -3,6 +3,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Activity, ArrowRight, BarChart3, Map as MapIcon, Navigation, Wind, CloudRain, Sun, Cloud, LayoutDashboard, MapPinned, Medal, PieChart, TrendingUp, Leaf, Zap } from 'lucide-react-native';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { COLORS } from '../constants';
 import { fetchEmissionSuggestion, getCurrentUserProfile, getTodayCo2Kg } from '../storage';
 import type { RootStackParamList, UserProfile } from '../types';
 
@@ -97,7 +98,7 @@ export default function HomeScreen({ navigation, route }: Props) {
 
       {/* 3D-ish Dashboard Card */}
       <LinearGradient
-        colors={['#588157', '#3A5A40']}
+        colors={[COLORS.primary, '#00796B']}
         style={styles.mainDashboard}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
@@ -132,8 +133,8 @@ export default function HomeScreen({ navigation, route }: Props) {
           style={styles.gridCard}
           onPress={() => navigation.navigate('Map')}
         >
-          <View style={[styles.iconCircle, { backgroundColor: '#E8F5E9' }]}>
-            <MapPinned size={32} color="#2D6A4F" strokeWidth={2.5} />
+          <View style={[styles.iconCircle, { backgroundColor: COLORS.primaryTransparent }]}>
+            <MapPinned size={32} color={COLORS.primary} strokeWidth={2.5} />
           </View>
           <Text style={styles.cardLabel}>Eco Maps</Text>
           <Text style={styles.cardSubLabel}>Smart routes</Text>
@@ -143,8 +144,8 @@ export default function HomeScreen({ navigation, route }: Props) {
           style={styles.gridCard}
           onPress={() => navigation.navigate('Analytics')}
         >
-          <View style={[styles.iconCircle, { backgroundColor: '#F1F8E9' }]}>
-            <PieChart size={32} color="#558B2F" strokeWidth={2.5} />
+          <View style={[styles.iconCircle, { backgroundColor: 'rgba(128, 185, 24, 0.1)' }]}>
+            <PieChart size={32} color={COLORS.secondary} strokeWidth={2.5} />
           </View>
           <Text style={styles.cardLabel}>Analytics</Text>
           <Text style={styles.cardSubLabel}>CO2 Insights</Text>
@@ -173,7 +174,7 @@ export default function HomeScreen({ navigation, route }: Props) {
       <View style={styles.suggestionCard}>
         <View style={styles.suggestionHeader}>
           <Text style={styles.suggestionTitle}>AI Tip of the Day</Text>
-          <ArrowRight size={18} color="#344E41" />
+          <ArrowRight size={18} color={COLORS.dark} />
         </View>
         <Text style={styles.suggestionText}>
           {tip ?? 'Loading your personalized tip…'}
@@ -186,7 +187,7 @@ export default function HomeScreen({ navigation, route }: Props) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F7FBF7',
+    backgroundColor: COLORS.background,
   },
   content: {
     padding: 20,
@@ -202,23 +203,23 @@ const styles = StyleSheet.create({
   greeting: {
     fontSize: 26,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   date: {
     fontSize: 14,
-    color: '#74C69D',
+    color: COLORS.primary,
     fontWeight: '600',
   },
   avatar: {
     width: 52,
     height: 52,
     borderRadius: 26,
-    backgroundColor: '#D8F3DC',
+    backgroundColor: COLORS.primaryTransparent,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#B7E4C7',
-    shadowColor: '#2D6A4F',
+    borderColor: COLORS.primary,
+    shadowColor: COLORS.dark,
     shadowOpacity: 0.1,
     shadowRadius: 10,
     elevation: 3,
@@ -226,14 +227,14 @@ const styles = StyleSheet.create({
   avatarText: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#344E41',
+    color: COLORS.dark,
   },
   weatherCard: {
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 28,
     padding: 20,
     marginBottom: 24,
-    shadowColor: '#2D6A4F',
+    shadowColor: COLORS.dark,
     shadowOffset: { width: 0, height: 10 },
     shadowOpacity: 0.08,
     shadowRadius: 20,
@@ -241,7 +242,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   weatherInfo: {
     flexDirection: 'row',
@@ -252,13 +253,13 @@ const styles = StyleSheet.create({
   weatherTemp: {
     fontSize: 20,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   aiBadge: {
     position: 'absolute',
     top: 20,
     right: 20,
-    backgroundColor: '#D8F3DC',
+    backgroundColor: COLORS.primaryTransparent,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 10,
@@ -266,21 +267,22 @@ const styles = StyleSheet.create({
   aiBadgeText: {
     fontSize: 10,
     fontWeight: '900',
-    color: '#2D6A4F',
+    color: COLORS.primary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   weatherAdvice: {
     fontSize: 15,
-    color: '#409167',
+    color: COLORS.dark,
     lineHeight: 22,
     fontWeight: '600',
+    opacity: 0.8,
   },
   mainDashboard: {
     borderRadius: 32,
     padding: 28,
     marginBottom: 24,
-    shadowColor: '#1B4332',
+    shadowColor: COLORS.primary,
     shadowOffset: { width: 0, height: 15 },
     shadowOpacity: 0.25,
     shadowRadius: 20,
@@ -342,7 +344,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: '#344E41',
+    color: COLORS.dark,
   },
   grid: {
     flexDirection: 'row',
@@ -353,16 +355,16 @@ const styles = StyleSheet.create({
   },
   gridCard: {
     width: (width - 56) / 2,
-    backgroundColor: '#fff',
+    backgroundColor: COLORS.white,
     borderRadius: 28,
     padding: 20,
-    shadowColor: '#2D6A4F',
+    shadowColor: COLORS.dark,
     shadowOffset: { width: 0, height: 8 },
     shadowOpacity: 0.08,
     shadowRadius: 15,
     elevation: 4,
     borderWidth: 1,
-    borderColor: '#F0F7F0',
+    borderColor: COLORS.lightGray,
   },
   iconCircle: {
     width: 56,
@@ -380,21 +382,21 @@ const styles = StyleSheet.create({
   cardLabel: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#1B4332',
+    color: COLORS.dark,
   },
   cardSubLabel: {
     fontSize: 13,
-    color: '#52B788',
+    color: COLORS.secondary,
     marginTop: 4,
     fontWeight: '500',
   },
   suggestionCard: {
-    backgroundColor: '#D8F3DC',
+    backgroundColor: COLORS.primaryTransparent,
     borderRadius: 28,
     padding: 24,
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: '#B7E4C7',
+    borderColor: COLORS.primary,
   },
   suggestionHeader: {
     flexDirection: 'row',
@@ -405,11 +407,11 @@ const styles = StyleSheet.create({
   suggestionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#344E41',
+    color: COLORS.dark,
   },
   suggestionText: {
     fontSize: 14,
-    color: '#588157',
+    color: COLORS.primary,
     lineHeight: 20,
     fontWeight: '500',
   },
