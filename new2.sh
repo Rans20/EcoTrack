@@ -1,2 +1,0 @@
-    eas login
-    
