@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'models/user_profile.dart';
 import 'services/supabase_service.dart';
 import 'screens/home_screen.dart';
 import 'screens/leaderboard_screen.dart';
@@ -159,36 +162,91 @@ class SignUpScreen extends StatefulWidget {
 class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _heightController = TextEditingController();
+  final _weightController = TextEditingController();
+  final _nationalityController = TextEditingController();
+  final _countryController = TextEditingController();
+  final _cityController = TextEditingController();
+  final _carController = TextEditingController();
+  File? _imageFile;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() => _imageFile = File(pickedFile.path));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Account')),
-      body: Padding(
+      appBar: AppBar(
+        title: const Text('Create Account', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
+            Center(
+              child: GestureDetector(
+                onTap: _pickImage,
+                child: CircleAvatar(
+                  radius: 50,
+                  backgroundColor: theme.colorScheme.surfaceVariant,
+                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                  child: _imageFile == null
+                      ? const Icon(Icons.add_a_photo, size: 30, color: Colors.grey)
+                      : null,
+                ),
+              ),
             ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
+            const SizedBox(height: 32),
+            _buildTextField(_nameController, 'Full Name', Icons.person),
+            _buildTextField(_emailController, 'Email', Icons.email),
+            _buildTextField(_passwordController, 'Password', Icons.lock, obscure: true),
+            Row(
+              children: [
+                Expanded(child: _buildTextField(_heightController, 'Height (cm)', Icons.height)),
+                const SizedBox(width: 16),
+                Expanded(child: _buildTextField(_weightController, 'Weight (kg)', Icons.monitor_weight)),
+              ],
             ),
-            const SizedBox(height: 24),
+            _buildTextField(_nationalityController, 'Nationality', Icons.flag),
+            _buildTextField(_countryController, 'Country', Icons.public),
+            _buildTextField(_cityController, 'City', Icons.location_city),
+            _buildTextField(_carController, 'Car Model (or "Other")', Icons.directions_car),
+            const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () async {
                 try {
+                  final profile = UserProfile(
+                    id: '',
+                    fullName: _nameController.text,
+                    heightCm: _heightController.text,
+                    weightKg: _weightController.text,
+                    nationality: _nationalityController.text,
+                    country: _countryController.text,
+                    city: _cityController.text,
+                    car: _carController.text.isEmpty ? 'Other' : _carController.text,
+                    createdAt: DateTime.now(),
+                  );
                   await context.read<SupabaseService>().signUp(
                         _emailController.text,
                         _passwordController.text,
+                        profile,
+                        _imageFile,
                       );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Verification email sent!')),
+                      const SnackBar(content: Text('Account created! Please check your email.')),
                     );
+                    Navigator.pop(context);
                   }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -196,9 +254,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   );
                 }
               },
-              child: const Text('Sign Up'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Sign Up', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool obscure = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: TextField(
+        controller: controller,
+        obscureText: obscure,
+        decoration: InputDecoration(
+          labelText: label,
+          prefixIcon: Icon(icon),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          filled: true,
+          fillColor: Colors.white,
         ),
       ),
     );
@@ -254,10 +335,26 @@ class _MainNavigationState extends State<MainNavigation> {
             showSelectedLabels: true,
             showUnselectedLabels: true,
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.dashboard_rounded), label: 'Home'),
-              BottomNavigationBarItem(icon: Icon(Icons.map_rounded), label: 'Maps'),
-              BottomNavigationBarItem(icon: Icon(Icons.emoji_events_rounded), label: 'Global'),
-              BottomNavigationBarItem(icon: Icon(Icons.analytics_rounded), label: 'Stats'),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.dashboard_rounded, size: 28),
+                activeIcon: Icon(Icons.dashboard_rounded, size: 32),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.map_rounded, size: 28),
+                activeIcon: Icon(Icons.map_rounded, size: 32),
+                label: 'Maps',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.emoji_events_rounded, size: 28),
+                activeIcon: Icon(Icons.emoji_events_rounded, size: 32),
+                label: 'Global',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.analytics_rounded, size: 28),
+                activeIcon: Icon(Icons.analytics_rounded, size: 32),
+                label: 'Stats',
+              ),
             ],
           ),
         ),

@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:path/path.dart' as p;
 import '../models/user_profile.dart';
 
 class SupabaseService {
@@ -29,8 +31,44 @@ class SupabaseService {
     );
   }
 
-  Future<void> signUp(String email, String password) async {
-    await client.auth.signUp(email: email, password: password);
+  Future<void> signUp(String email, String password, UserProfile profile, File? imageFile) async {
+    final AuthResponse res = await client.auth.signUp(email: email, password: password);
+    final user = res.user;
+    if (user == null) throw 'Signup failed';
+
+    String? photoUrl;
+    if (imageFile != null) {
+      photoUrl = await uploadProfilePicture(user.id, imageFile);
+    }
+
+    final newProfile = UserProfile(
+      id: user.id,
+      fullName: profile.fullName,
+      heightCm: profile.heightCm,
+      weightKg: profile.weightKg,
+      nationality: profile.nationality,
+      country: profile.country,
+      city: profile.city,
+      car: profile.car,
+      photoUrl: photoUrl,
+      createdAt: DateTime.now(),
+    );
+
+    await client.from('profiles').upsert(newProfile.toJson());
+  }
+
+  Future<String?> uploadProfilePicture(String userId, File file) async {
+    final extension = p.extension(file.path);
+    final fileName = '$userId$extension';
+    final filePath = 'avatars/$fileName';
+
+    await client.storage.from('profiles').upload(
+          filePath,
+          file,
+          fileOptions: const FileOptions(upsert: true),
+        );
+
+    return client.storage.from('profiles').getPublicUrl(filePath);
   }
 
   Future<void> signIn(String email, String password) async {
