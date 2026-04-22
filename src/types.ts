@@ -7,6 +7,7 @@ export interface UserProfile {
   fullName: string;
   heightCm: string;
   weightKg: string;
+  nationality: string;
   country: string;
   city: string;
   carEngineSize: EngineSize;

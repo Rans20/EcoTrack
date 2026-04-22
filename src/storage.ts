@@ -16,6 +16,7 @@ function fromRow(row: ProfileRow): UserProfile {
     fullName: row.full_name ?? '',
     heightCm: row.height_cm ?? '',
     weightKg: row.weight_kg ?? '',
+    nationality: row.nationality ?? '',
     country: row.country ?? '',
     city: row.city ?? '',
     carEngineSize: (row.car_engine_size ?? '1.0L') as EngineSize,
@@ -32,6 +33,7 @@ function toRow(p: Partial<UserProfile>, userId: string): ProfileInsert {
     full_name: p.fullName,
     height_cm: p.heightCm,
     weight_kg: p.weightKg,
+    nationality: p.nationality,
     country: p.country,
     city: p.city,
     car_engine_size: p.carEngineSize,
@@ -58,9 +60,41 @@ export async function upsertUserProfile(
 ): Promise<UserProfile> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('Not authenticated');
+
+  let photoUrl = profile.photoUri;
+  if (photoUrl && photoUrl.startsWith('file://')) {
+    try {
+      const fileName = `${user.id}/avatar_${Date.now()}.jpg`;
+      const formData = new FormData();
+      // @ts-ignore
+      formData.append('file', {
+        uri: photoUrl,
+        name: fileName,
+        type: 'image/jpeg',
+      });
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, formData, {
+          contentType: 'image/jpeg',
+          upsert: true,
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName);
+
+      photoUrl = publicUrl;
+    } catch (e) {
+      console.warn('Avatar upload failed, continuing with local URI', e);
+    }
+  }
+
   const { data, error } = await supabase
     .from('profiles')
-    .upsert(toRow(profile, user.id))
+    .upsert(toRow({ ...profile, photoUri: photoUrl }, user.id))
     .select('*')
     .single();
   if (error) throw error;

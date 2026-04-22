@@ -24,27 +24,37 @@ function Icon3D({ children, color, focused }: { children: React.ReactNode, color
     <View style={{
       alignItems: 'center',
       justifyContent: 'center',
-      top: focused ? -5 : 0,
+      top: focused ? -8 : 0,
     }}>
       <View style={{
-        padding: 8,
-        borderRadius: 12,
-        backgroundColor: focused ? COLORS.primaryTransparent : 'transparent',
+        padding: 10,
+        borderRadius: 18,
+        backgroundColor: focused ? COLORS.white : 'transparent',
         shadowColor: color,
-        shadowOffset: { width: 0, height: focused ? 4 : 0 },
-        shadowOpacity: focused ? 0.3 : 0,
-        shadowRadius: 4,
-        elevation: focused ? 5 : 0,
+        shadowOffset: { width: 0, height: focused ? 12 : 0 },
+        shadowOpacity: focused ? 0.4 : 0,
+        shadowRadius: 12,
+        elevation: focused ? 10 : 0,
+        borderWidth: focused ? 1 : 0,
+        borderColor: focused ? COLORS.lightGray : 'transparent',
       }}>
-        {children}
+        <View style={{
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: focused ? 2 : 0 },
+          shadowOpacity: focused ? 0.2 : 0,
+          shadowRadius: 2,
+        }}>
+          {children}
+        </View>
       </View>
       {focused && (
         <View style={{
-          width: 4,
-          height: 4,
+          width: 20,
+          height: 3,
           borderRadius: 2,
           backgroundColor: color,
-          marginTop: 4
+          marginTop: 8,
+          opacity: 0.6,
         }} />
       )}
     </View>

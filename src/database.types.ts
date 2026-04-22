@@ -19,6 +19,7 @@ export interface Database {
           full_name: string;
           height_cm: string | null;
           weight_kg: string | null;
+          nationality: string | null;
           country: string | null;
           city: string | null;
           car_engine_size: string | null;
@@ -32,6 +33,7 @@ export interface Database {
           full_name?: string;
           height_cm?: string | null;
           weight_kg?: string | null;
+          nationality?: string | null;
           country?: string | null;
           city?: string | null;
           car_engine_size?: string | null;
@@ -104,6 +106,7 @@ export interface Database {
           id: string | null;
           full_name: string | null;
           photo_uri: string | null;
+          nationality: string | null;
           city: string | null;
           country: string | null;
           activity_mode: string | null;

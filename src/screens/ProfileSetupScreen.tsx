@@ -25,6 +25,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
   const [fullName, setFullName] = useState('');
   const [heightCm, setHeightCm] = useState('');
   const [weightKg, setWeightKg] = useState('');
+  const [nationality, setNationality] = useState('');
   const [country, setCountry] = useState('');
   const [city, setCity] = useState('');
   const [engineSizes, setEngineSizes] = useState<EngineSize[]>([]);
@@ -66,13 +67,14 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
   }
 
   async function handleSubmit() {
-    if (!fullName || !country || !city) return;
+    if (!fullName || !country || !city || !nationality) return;
 
     try {
       const profile = await upsertUserProfile({
         fullName,
         heightCm,
         weightKg,
+        nationality,
         country,
         city,
         carEngineSize,
@@ -146,6 +148,17 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
             </View>
           </View>
 
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>Nationality</Text>
+            <TextInput
+              style={styles.input}
+              value={nationality}
+              onChangeText={setNationality}
+              placeholder="e.g. French"
+              placeholderTextColor={COLORS.gray}
+            />
+          </View>
+
           <View style={styles.row}>
             <View style={[styles.inputWrapper, { flex: 1, marginRight: 12 }]}>
               <Text style={styles.label}>Country</Text>
@@ -170,7 +183,7 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
           </View>
 
           <View style={styles.pickerWrapper}>
-            <Text style={styles.label}>Vehicle Engine</Text>
+            <Text style={styles.label}>Car / Vehicle</Text>
             <View style={styles.pickerBox}>
               <Picker
                 selectedValue={carEngineSize}
@@ -178,7 +191,12 @@ export default function ProfileSetupScreen({ route, navigation }: Props) {
                 style={styles.picker}
               >
                 {engineSizes.map((size) => (
-                  <Picker.Item key={size} label={size} value={size} color={COLORS.dark} />
+                  <Picker.Item
+                    key={size}
+                    label={size === 'None / Other' ? 'None (Other)' : size}
+                    value={size}
+                    color={COLORS.dark}
+                  />
                 ))}
               </Picker>
             </View>
