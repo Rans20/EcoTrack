@@ -1,8 +1,41 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../models/user_profile.dart';
 
 class SupabaseService {
   static final SupabaseClient client = Supabase.instance.client;
+
+  Future<void> signInWithGoogle() async {
+    const webClientId = 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
+    const iosClientId = 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com';
+
+    final GoogleSignIn googleSignIn = GoogleSignIn(
+      clientId: iosClientId,
+      serverClientId: webClientId,
+    );
+    final googleUser = await googleSignIn.signIn();
+    final googleAuth = await googleUser?.authentication;
+    final accessToken = googleAuth?.accessToken;
+    final idToken = googleAuth?.idToken;
+
+    if (accessToken == null || idToken == null) {
+      throw 'No Google Access Token/ID Token found.';
+    }
+
+    await client.auth.signInWithIdToken(
+      provider: OAuthProvider.google,
+      idToken: idToken,
+      accessToken: accessToken,
+    );
+  }
+
+  Future<void> signUp(String email, String password) async {
+    await client.auth.signUp(email: email, password: password);
+  }
+
+  Future<void> signIn(String email, String password) async {
+    await client.auth.signInWithPassword(email: email, password: password);
+  }
 
   Future<UserProfile?> getCurrentUserProfile() async {
     final user = client.auth.currentUser;
