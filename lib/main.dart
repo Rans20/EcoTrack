@@ -362,3 +362,14 @@ class _MainNavigationState extends State<MainNavigation> {
     );
   }
 }
+
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+
+Future<void> main() async {
+  await Supabase.initialize(
+    url: 'https://gzwciujlrsaoxunqjojl.supabase.co',
+    anonKey: 'sb_publishable_29fl6VZrV2bFACYxjudEHg_YEzbQ9UL',
+  );
+  runApp(MyApp());
+}

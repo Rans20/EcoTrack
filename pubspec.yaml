@@ -9,7 +9,7 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
-  supabase_flutter: ^2.6.0
+  supabase_flutter: ^2.12.4
   google_maps_flutter: ^2.5.3
   location: ^5.0.3
   fl_chart: ^0.66.0
