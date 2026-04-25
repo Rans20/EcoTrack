@@ -12,7 +12,7 @@ create table public.profiles (
   country text default '',
   city text default '',
   car_engine_size text check (car_engine_size in
-    ('1.0L','1.2L','1.4L','1.6L','2.0L','2.5L','3.0L+','Electric','Hybrid')),
+    ('1.0L','1.2L','1.4L','1.6L','2.0L','2.5L','3.0L+','Electric','Hybrid','Other')),
   industry text check (industry in
     ('Transport','Maritime','Aviation','Recycling','Energy','Agriculture','Other')),
   activity_mode text check (activity_mode in
