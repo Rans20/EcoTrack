@@ -42,7 +42,7 @@ class AnalyticsScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: primaryColor,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [BoxShadow(color: primaryColor.withOpacity(0.2), blurRadius: 12, offset: const Offset(0, 4))],
+            boxShadow: [BoxShadow(color: primaryColor.withValues(alpha: 0.2), blurRadius: 12, offset: const Offset(0, 4))],
           ),
           child: const Icon(Icons.analytics_rounded, color: Colors.white, size: 30),
         ),
@@ -74,8 +74,8 @@ class AnalyticsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFECEFF1).withOpacity(0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 15, offset: const Offset(0, 8))],
+        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))],
       ),
       child: Column(
         children: [
@@ -94,8 +94,8 @@ class AnalyticsScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: const Color(0xFFECEFF1).withOpacity(0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 20, offset: const Offset(0, 10))],
+        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 20, offset: const Offset(0, 10))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,7 +127,7 @@ class AnalyticsScreen extends StatelessWidget {
             color: color,
             barWidth: 4,
             dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(show: true, color: color.withOpacity(0.1)),
+            belowBarData: BarAreaData(show: true, color: color.withValues(alpha: 0.1)),
           ),
         ],
       ),

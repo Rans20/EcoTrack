@@ -34,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final primaryColor = theme.colorScheme.primary; // Deep Green
     final accentColor = theme.colorScheme.secondary; // Emerald Green
     final tertiaryColor = theme.colorScheme.tertiary; // Teal
-    final surfaceColor = theme.colorScheme.surface; // Light Mint Gray
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -52,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 32),
               Text(
                 'Eco Actions',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor.withOpacity(0.8)),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor.withValues(alpha: 0.8)),
               ),
               const SizedBox(height: 16),
               _buildGrid(context, primaryColor, accentColor, tertiaryColor),
@@ -80,9 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
           width: 52,
           height: 52,
           decoration: BoxDecoration(
-            color: tertiaryColor.withOpacity(0.1),
+            color: tertiaryColor.withValues(alpha: 0.1),
             shape: BoxShape.circle,
-            border: Border.all(color: tertiaryColor.withOpacity(0.2), width: 2),
+            border: Border.all(color: tertiaryColor.withValues(alpha: 0.2), width: 2),
           ),
           alignment: Alignment.center,
           child: Icon(Icons.person, color: tertiaryColor),
@@ -97,8 +96,8 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFECEFF1).withOpacity(0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 8))],
+        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 8))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(color: tertiaryColor.withOpacity(0.1), borderRadius: BorderRadius.circular(10)),
+                decoration: BoxDecoration(color: tertiaryColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
                 child: Text('AI ADVISOR', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: tertiaryColor)),
               ),
             ],
@@ -136,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(30),
-        boxShadow: [BoxShadow(color: primaryColor.withOpacity(0.25), blurRadius: 20, offset: const Offset(0, 12))],
+        boxShadow: [BoxShadow(color: primaryColor.withValues(alpha: 0.25), blurRadius: 20, offset: const Offset(0, 12))],
       ),
       child: Column(
         children: [
@@ -146,7 +145,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const Text('Live CO₂ Impact', style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600)),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(12)),
+                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
                 child: Row(
                   children: [
                     Icon(Icons.circle, size: 8, color: accentColor),
@@ -189,10 +188,10 @@ class _HomeScreenState extends State<HomeScreen> {
       mainAxisSpacing: 16,
       childAspectRatio: 0.9,
       children: [
-        _buildGridCard(Icons.map, 'Eco Maps', 'Smart routes', tertiaryColor.withOpacity(0.08), tertiaryColor),
-        _buildGridCard(Icons.pie_chart, 'Analytics', 'CO2 Insights', accentColor.withOpacity(0.08), accentColor),
-        _buildGridCard(Icons.emoji_events, 'Global Board', 'Top Savers', Colors.amber.withOpacity(0.08), Colors.amber.shade800),
-        _buildGridCard(Icons.trending_up, 'Milestones', 'Achievements', Colors.blue.withOpacity(0.08), Colors.blue.shade700),
+        _buildGridCard(Icons.map, 'Eco Maps', 'Smart routes', tertiaryColor.withValues(alpha: 0.08), tertiaryColor),
+        _buildGridCard(Icons.pie_chart, 'Analytics', 'CO2 Insights', accentColor.withValues(alpha: 0.08), accentColor),
+        _buildGridCard(Icons.emoji_events, 'Global Board', 'Top Savers', Colors.amber.withValues(alpha: 0.08), Colors.amber.shade800),
+        _buildGridCard(Icons.trending_up, 'Milestones', 'Achievements', Colors.blue.withValues(alpha: 0.08), Colors.blue.shade700),
       ],
     );
   }
@@ -203,8 +202,8 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFECEFF1).withOpacity(0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4))],
+        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,9 +226,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: tertiaryColor.withOpacity(0.05),
+        color: tertiaryColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: tertiaryColor.withOpacity(0.15)),
+        border: Border.all(color: tertiaryColor.withValues(alpha: 0.15)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -237,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('AI Tip of the Day', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: tertiaryColor.withOpacity(0.8))),
+              Text('AI Tip of the Day', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: tertiaryColor.withValues(alpha: 0.8))),
               Icon(Icons.lightbulb_outline, size: 20, color: tertiaryColor),
             ],
           ),

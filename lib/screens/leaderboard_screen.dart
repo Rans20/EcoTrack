@@ -47,7 +47,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: theme.colorScheme.primary.withOpacity(0.3),
+                          color: theme.colorScheme.primary.withValues(alpha: 0.3),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
@@ -84,7 +84,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     border: Border.all(color: const Color(0xFFF0F7F0)),
                     boxShadow: [
                       BoxShadow(
-                        color: const Color(0xFF1B4332).withOpacity(0.1),
+                        color: const Color(0xFF1B4332).withValues(alpha: 0.1),
                         blurRadius: 20,
                       ),
                     ],
@@ -99,7 +99,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.secondary.withOpacity(0.1),
+                              color: theme.colorScheme.secondary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text('This Week', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: theme.colorScheme.secondary)),

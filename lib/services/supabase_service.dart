@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:path/path.dart' as p;
@@ -8,11 +9,13 @@ class SupabaseService {
   static final SupabaseClient client = Supabase.instance.client;
 
   Future<void> signInWithGoogle() async {
-    /// TODO: Replace these with your actual client IDs from Google Cloud Console
-    /// Web Client ID is used for the server-side exchange.
-    /// iOS Client ID is used for the native iOS SDK.
-    const webClientId = 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
-    const iosClientId = 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com';
+    /// TODO: REPLACE THESE PLACEHOLDERS
+    /// 1. Go to Google Cloud Console -> APIs & Services -> Credentials.
+    /// 2. Create an OAuth 2.0 Client ID for 'Web application'. Copy the 'Client ID' and paste it as [webClientId].
+    /// 3. Create an OAuth 2.0 Client ID for 'iOS'. Copy the 'Client ID' and paste it as [iosClientId].
+    /// 4. In Supabase Dashboard -> Auth -> Providers -> Google, enable it and paste the [webClientId].
+    const webClientId = '.878635206146-adailjatpcffen700grddbgi5s0iponl.apps.googleusercontent.com';
+    const iosClientId = '878635206146-nujep5778aj1j6uvo1f8eddn7f92lmm7.apps.googleusercontent.com';
 
     final GoogleSignIn googleSignIn = GoogleSignIn(
       clientId: iosClientId,
@@ -57,7 +60,7 @@ class SupabaseService {
         }
       }
     } catch (e) {
-      print('Error in signInWithGoogle: $e');
+      debugPrint('Error in signInWithGoogle: $e');
       rethrow;
     }
   }
@@ -67,20 +70,21 @@ class SupabaseService {
       final AuthResponse res = await client.auth.signUp(
         email: email, 
         password: password,
-        // Optional: Redirect URL if using email confirmation
-        // emailRedirectTo: 'io.supabase.flutter://login-callback/',
       );
       
       final user = res.user;
       if (user == null) throw 'Signup failed: No user returned';
 
+      // NOTE: If 'Confirm Email' is ON in Supabase, the user is not authenticated yet.
+      // The profile creation below might fail if your RLS policies require authentication.
+      // Recommendation: Create profiles via a Database Webhook on 'auth.users' insert.
+      
       String? photoUrl;
       if (imageFile != null) {
         try {
           photoUrl = await uploadProfilePicture(user.id, imageFile);
         } catch (e) {
-          print('Warning: Failed to upload profile picture: $e');
-          // We continue anyway, as the account was created
+          debugPrint('Warning: Failed to upload profile picture: $e');
         }
       }
 
@@ -97,11 +101,16 @@ class SupabaseService {
         createdAt: DateTime.now(),
       );
 
-      // Note: This might fail if 'Confirm Email' is ON in Supabase, 
-      // as the user isn't fully authenticated until they confirm.
-      await client.from('profiles').upsert(newProfile.toJson());
+      // We attempt to create the profile. If it fails due to RLS, it's likely 
+      // because the user hasn't confirmed their email yet.
+      try {
+        await client.from('profiles').upsert(newProfile.toJson());
+      } catch (e) {
+        debugPrint('Profile creation failed (possibly due to RLS/unconfirmed email): $e');
+        // If email confirmation is required, this is expected to fail if RLS is strict.
+      }
     } catch (e) {
-      print('Error in signUp: $e');
+      debugPrint('Error in signUp: $e');
       rethrow;
     }
   }
@@ -121,7 +130,17 @@ class SupabaseService {
   }
 
   Future<void> signIn(String email, String password) async {
-    await client.auth.signInWithPassword(email: email, password: password);
+    try {
+      await client.auth.signInWithPassword(email: email, password: password);
+    } on AuthException catch (e) {
+      if (e.message.contains('Email not confirmed')) {
+        throw 'Please confirm your email address before signing in.';
+      }
+      rethrow;
+    } catch (e) {
+      debugPrint('Error in signIn: $e');
+      rethrow;
+    }
   }
 
   Future<UserProfile?> getCurrentUserProfile() async {

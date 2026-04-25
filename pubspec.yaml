@@ -3,7 +3,7 @@ description: Track your CO2. Tread lighter.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.11.5 <4.0.0'
 
 dependencies:
   flutter:

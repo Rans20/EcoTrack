@@ -13,13 +13,18 @@ import 'screens/map_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // IMPORTANT: Ensure your Supabase project is configured with:
-  // 1. Email Auth enabled (Dashboard -> Auth -> Providers -> Email)
-  // 2. Google Auth enabled (Dashboard -> Auth -> Providers -> Google)
-  // 3. Profiles table created with RLS policies allowing inserts/updates for authenticated users.
+  /// SETUP INSTRUCTIONS FOR SUPABASE:
+  /// 1. Go to Supabase Dashboard -> Project Settings -> API.
+  /// 2. Copy 'Project URL' and 'anon key' (Public).
+  /// 3. Go to Auth -> Providers:
+  ///    - Email: Enable 'Confirm Email' if you want verification (requires additional handling for profile creation).
+  ///    - Google: Enable and provide Client ID from Google Cloud Console.
+  /// 4. For Google Sign-In on Android:
+  ///    - Add SHA-1 fingerprint to Google Cloud Console and Firebase (if using google-services.json).
+  ///    - Add the Web Client ID to Supabase Google Provider configuration.
   await Supabase.initialize(
     url: 'https://gzwciujlrsaoxunqjojl.supabase.co',
-    anonKey: 'YOUR_SUPABASE_ANON_KEY', // Replace with your actual anon key from Supabase Dashboard
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6d2NpdWpscnNhb3h1bnFqb2psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTUxOTcsImV4cCI6MjA5MjE5MTE5N30.SRFiSebyzaK4J5nf0arK4Hg8xWvSZHzBdgGZV98jtwo ', // FIXME: Replace with your actual anon key
   );
 
   runApp(
@@ -47,7 +52,6 @@ class FootpryntApp extends StatelessWidget {
           secondary: const Color(0xFF00C853), // Emerald Green
           tertiary: const Color(0xFF26A69A), // Teal
           surface: const Color(0xFFF1F5F2), // Very Light Mint Gray
-          background: const Color(0xFFF9FBF9), // Pure White-Green background
         ),
         useMaterial3: true,
         fontFamily: 'Inter',
@@ -135,9 +139,11 @@ class WelcomeScreen extends StatelessWidget {
                       );
                     }
                   } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error signing in: $e')),
-                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error signing in: $e')),
+                      );
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -146,7 +152,7 @@ class WelcomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 20),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   elevation: 8,
-                  shadowColor: const Color(0xFF1E2A3A).withOpacity(0.4),
+                  shadowColor: const Color(0xFF1E2A3A).withValues(alpha: 0.4),
                 ),
                 child: const Text(
                   'Sign in with Google',
@@ -252,9 +258,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     );
                   }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
                 } finally {
                   if (mounted) setState(() => _isLoading = false);
                 }
@@ -322,7 +330,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 onTap: _pickImage,
                 child: CircleAvatar(
                   radius: 50,
-                  backgroundColor: theme.colorScheme.surfaceVariant,
+                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
                   backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
                   child: _imageFile == null
                       ? const Icon(Icons.add_a_photo, size: 30, color: Colors.grey)
@@ -373,9 +381,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     Navigator.pop(context);
                   }
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error: $e')),
-                  );
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
@@ -439,7 +449,7 @@ class _MainNavigationState extends State<MainNavigation> {
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF1A237E).withOpacity(0.1),
+              color: const Color(0xFF1A237E).withValues(alpha: 0.1),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),

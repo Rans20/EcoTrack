@@ -42,8 +42,8 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = const Color(0xFF1A237E);
-    final accentColor = const Color(0xFF00BFA5);
+    const primaryColor = Color(0xFF1A237E);
+    const accentColor = Color(0xFF00BFA5);
 
     return Scaffold(
       body: Stack(
@@ -71,7 +71,7 @@ class _MapScreenState extends State<MapScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
                 ),
                 child: Row(
                   children: [
@@ -107,9 +107,9 @@ class _MapScreenState extends State<MapScreen> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(24),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
       ),
       child: Row(
         children: ['Driving', 'Hiking', 'Walking'].map((type) {
@@ -136,7 +136,7 @@ class _MapScreenState extends State<MapScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 20)],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 20)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
