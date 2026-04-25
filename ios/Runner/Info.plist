@@ -31,6 +31,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<!-- TODO: Replace with your REVERSED_CLIENT_ID from GoogleService-Info.plist -->
 				<string>YOUR_REVERSED_CLIENT_ID</string>
 			</array>
 		</dict>

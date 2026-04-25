@@ -13,10 +13,13 @@ import 'screens/map_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Replace with your actual Supabase URL and Anon Key
+  // IMPORTANT: Ensure your Supabase project is configured with:
+  // 1. Email Auth enabled (Dashboard -> Auth -> Providers -> Email)
+  // 2. Google Auth enabled (Dashboard -> Auth -> Providers -> Google)
+  // 3. Profiles table created with RLS policies allowing inserts/updates for authenticated users.
   await Supabase.initialize(
     url: 'https://gzwciujlrsaoxunqjojl.supabase.co',
-    anonKey: 'sb_publishable_29fl6VZrV2bFACYxjudEHg_YEzbQ9UL',
+    anonKey: 'YOUR_SUPABASE_ANON_KEY', // Replace with your actual anon key from Supabase Dashboard
   );
 
   runApp(
@@ -50,7 +53,30 @@ class FootpryntApp extends StatelessWidget {
         fontFamily: 'Inter',
         scaffoldBackgroundColor: const Color(0xFFF9FBF9),
       ),
-      home: const WelcomeScreen(),
+      home: const AuthWrapper(),
+    );
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<AuthState>(
+      stream: Supabase.instance.client.auth.onAuthStateChange,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
+
+        final session = snapshot.data?.session;
+        if (session != null) {
+          return const MainNavigation();
+        } else {
+          return const WelcomeScreen();
+        }
+      },
     );
   }
 }
@@ -132,11 +158,11 @@ class WelcomeScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
                   );
                 },
                 child: Text(
-                  'Create an Account',
+                  'Sign In with Email',
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -144,8 +170,106 @@ class WelcomeScreen extends StatelessWidget {
                   ),
                 ),
               ),
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                  );
+                },
+                child: Text(
+                  'Create an Account',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(title: const Text('Sign In')),
+      body: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            TextField(
+              controller: _emailController,
+              decoration: InputDecoration(
+                labelText: 'Email',
+                prefixIcon: const Icon(Icons.email),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: _passwordController,
+              obscureText: true,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                prefixIcon: const Icon(Icons.lock),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+            const SizedBox(height: 24),
+            ElevatedButton(
+              onPressed: _isLoading ? null : () async {
+                setState(() => _isLoading = true);
+                try {
+                  await context.read<SupabaseService>().signIn(
+                    _emailController.text.trim(),
+                    _passwordController.text.trim(),
+                  );
+                  if (context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => const MainNavigation()),
+                      (route) => false,
+                    );
+                  }
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error: $e')),
+                  );
+                } finally {
+                  if (mounted) setState(() => _isLoading = false);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: _isLoading 
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+          ],
         ),
       ),
     );
@@ -361,15 +485,4 @@ class _MainNavigationState extends State<MainNavigation> {
       ),
     );
   }
-}
-
-import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-Future<void> main() async {
-  await Supabase.initialize(
-    url: 'https://gzwciujlrsaoxunqjojl.supabase.co',
-    anonKey: 'sb_publishable_29fl6VZrV2bFACYxjudEHg_YEzbQ9UL',
-  );
-  runApp(MyApp());
 }

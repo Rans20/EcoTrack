@@ -8,6 +8,9 @@ class SupabaseService {
   static final SupabaseClient client = Supabase.instance.client;
 
   Future<void> signInWithGoogle() async {
+    /// TODO: Replace these with your actual client IDs from Google Cloud Console
+    /// Web Client ID is used for the server-side exchange.
+    /// iOS Client ID is used for the native iOS SDK.
     const webClientId = 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
     const iosClientId = 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com';
 
@@ -15,46 +18,92 @@ class SupabaseService {
       clientId: iosClientId,
       serverClientId: webClientId,
     );
-    final googleUser = await googleSignIn.signIn();
-    final googleAuth = await googleUser?.authentication;
-    final accessToken = googleAuth?.accessToken;
-    final idToken = googleAuth?.idToken;
+    
+    try {
+      final googleUser = await googleSignIn.signIn();
+      if (googleUser == null) return;
 
-    if (accessToken == null || idToken == null) {
-      throw 'No Google Access Token/ID Token found.';
+      final googleAuth = await googleUser.authentication;
+      final accessToken = googleAuth.accessToken;
+      final idToken = googleAuth.idToken;
+
+      if (accessToken == null || idToken == null) {
+        throw 'No Google Access Token/ID Token found.';
+      }
+
+      final AuthResponse res = await client.auth.signInWithIdToken(
+        provider: OAuthProvider.google,
+        idToken: idToken,
+        accessToken: accessToken,
+      );
+
+      // Create profile if it doesn't exist
+      if (res.user != null) {
+        final profile = await getCurrentUserProfile();
+        if (profile == null) {
+          final newProfile = UserProfile(
+            id: res.user!.id,
+            fullName: googleUser.displayName ?? '',
+            heightCm: '',
+            weightKg: '',
+            nationality: '',
+            country: '',
+            city: '',
+            car: 'Other',
+            photoUrl: googleUser.photoUrl,
+            createdAt: DateTime.now(),
+          );
+          await client.from('profiles').upsert(newProfile.toJson());
+        }
+      }
+    } catch (e) {
+      print('Error in signInWithGoogle: $e');
+      rethrow;
     }
-
-    await client.auth.signInWithIdToken(
-      provider: OAuthProvider.google,
-      idToken: idToken,
-      accessToken: accessToken,
-    );
   }
 
   Future<void> signUp(String email, String password, UserProfile profile, File? imageFile) async {
-    final AuthResponse res = await client.auth.signUp(email: email, password: password);
-    final user = res.user;
-    if (user == null) throw 'Signup failed';
+    try {
+      final AuthResponse res = await client.auth.signUp(
+        email: email, 
+        password: password,
+        // Optional: Redirect URL if using email confirmation
+        // emailRedirectTo: 'io.supabase.flutter://login-callback/',
+      );
+      
+      final user = res.user;
+      if (user == null) throw 'Signup failed: No user returned';
 
-    String? photoUrl;
-    if (imageFile != null) {
-      photoUrl = await uploadProfilePicture(user.id, imageFile);
+      String? photoUrl;
+      if (imageFile != null) {
+        try {
+          photoUrl = await uploadProfilePicture(user.id, imageFile);
+        } catch (e) {
+          print('Warning: Failed to upload profile picture: $e');
+          // We continue anyway, as the account was created
+        }
+      }
+
+      final newProfile = UserProfile(
+        id: user.id,
+        fullName: profile.fullName,
+        heightCm: profile.heightCm,
+        weightKg: profile.weightKg,
+        nationality: profile.nationality,
+        country: profile.country,
+        city: profile.city,
+        car: profile.car,
+        photoUrl: photoUrl,
+        createdAt: DateTime.now(),
+      );
+
+      // Note: This might fail if 'Confirm Email' is ON in Supabase, 
+      // as the user isn't fully authenticated until they confirm.
+      await client.from('profiles').upsert(newProfile.toJson());
+    } catch (e) {
+      print('Error in signUp: $e');
+      rethrow;
     }
-
-    final newProfile = UserProfile(
-      id: user.id,
-      fullName: profile.fullName,
-      heightCm: profile.heightCm,
-      weightKg: profile.weightKg,
-      nationality: profile.nationality,
-      country: profile.country,
-      city: profile.city,
-      car: profile.car,
-      photoUrl: photoUrl,
-      createdAt: DateTime.now(),
-    );
-
-    await client.from('profiles').upsert(newProfile.toJson());
   }
 
   Future<String?> uploadProfilePicture(String userId, File file) async {

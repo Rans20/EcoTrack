@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>API_KEY</key>
+	<string>AIzaSyAus-SaP3KLdGaPDSHLwiA8gPKv0sCeSF4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>712687758536</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.footprynt.app</string>
+	<key>PROJECT_ID</key>
+	<string>ecotrack-e4850</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ecotrack-e4850.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:712687758536:ios:28f47db18f001884be89fd</string>
+</dict>
+</plist>
