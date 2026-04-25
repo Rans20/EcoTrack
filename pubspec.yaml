@@ -26,10 +26,12 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
 
 
-flutter_logo:
-    android: true
-    ios: true
-    image_path: assets/logo/logo.png
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logo/logo.png"
+  adaptive_icon_background: "#F1F5F2"
+  adaptive_icon_foreground: "assets/logo/logo.png"
 
 
 flutter:
