@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'models/user_profile.dart';
 import 'services/supabase_service.dart';
 import 'services/weather_service.dart';
@@ -56,47 +58,60 @@ class FootpryntApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6B8E23), // Olive/Sage Green
-          primary: const Color(0xFF4A6D4A), // Muted Forest
-          secondary: const Color(0xFF8DAA8D), // Soft Sage
-          tertiary: const Color(0xFFD9E2D9), // Pale Mist
-          surface: const Color(0xFFF9FBF9), // Warm White
+          seedColor: const Color(0xFF7BA67B), // Softer Sage
+          primary: const Color(0xFF5D7A5D), // Soft Forest
+          secondary: const Color(0xFFA3BFA3), // Light Sage
+          tertiary: const Color(0xFFE8EFE8), // Very Pale Mist
+          surface: const Color(0xFFFCFDFC), // Near White
+          error: const Color(0xFFE57373),
         ),
         useMaterial3: true,
         fontFamily: 'Inter',
-        scaffoldBackgroundColor: const Color(0xFFF9FBF9),
+        scaffoldBackgroundColor: const Color(0xFFFCFDFC),
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           titleTextStyle: TextStyle(
             color: Color(0xFF2D3436),
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            fontWeight: FontWeight.w800,
+            letterSpacing: -0.5,
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 28),
+            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+          ),
+        ),
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+            textStyle: const TextStyle(fontWeight: FontWeight.w600),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+            borderRadius: BorderRadius.circular(24),
+            borderSide: BorderSide(color: Colors.grey.shade200),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+            borderRadius: BorderRadius.circular(24),
+            borderSide: BorderSide(color: Colors.grey.shade200),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
-            borderSide: const BorderSide(color: Color(0xFF4A6D4A), width: 2),
+            borderRadius: BorderRadius.circular(24),
+            borderSide: const BorderSide(color: Color(0xFF5D7A5D), width: 1.5),
           ),
+          labelStyle: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w500),
+          prefixIconColor: const Color(0xFF5D7A5D),
         ),
       ),
       home: const AuthWrapper(),
@@ -133,148 +148,198 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final size = MediaQuery.of(context).size;
+
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              theme.colorScheme.tertiary.withValues(alpha: 0.3),
-              theme.colorScheme.surface,
-            ],
+      body: Stack(
+        children: [
+          // Background Animated Blobs
+          Positioned(
+            top: -size.height * 0.1,
+            right: -size.width * 0.2,
+            child: _buildBlob(theme.colorScheme.secondary.withValues(alpha: 0.2), 300)
+                .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveY(begin: -20, end: 20, duration: 4.seconds, curve: Curves.easeInOut)
+                .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 5.seconds),
           ),
-        ),
-        child: SafeArea(
-          child: Center(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 32),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                          blurRadius: 30,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
-                    ),
-                    child: Image.asset('assets/logo/logo.png', width: 140, height: 140),
-                  ),
-                  const SizedBox(height: 40),
-                  Text(
-                    'Footprynt',
-                    style: TextStyle(
-                      fontSize: 48,
-                      fontWeight: FontWeight.w900,
-                      color: theme.colorScheme.primary,
-                      letterSpacing: -1.5,
-                    ),
-                  ),
-                  const Text(
-                    'TRACK • REDUCE • IMPACT',
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF636E72),
-                      letterSpacing: 4,
-                    ),
-                  ),
-                  const SizedBox(height: 64),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        try {
-                          await context.read<SupabaseService>().signInWithGoogle();
-                          if (context.mounted) {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const MainNavigation()),
-                            );
-                          }
-                        } catch (e) {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error signing in: $e')),
-                            );
-                          }
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 20),
-                        elevation: 0,
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.g_mobiledata, size: 28),
-                          SizedBox(width: 12),
-                          Text(
-                            'Sign in with Google',
-                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          Positioned(
+            bottom: size.height * 0.1,
+            left: -size.width * 0.1,
+            child: _buildBlob(theme.colorScheme.primary.withValues(alpha: 0.1), 250)
+                .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                .moveX(begin: -30, end: 30, duration: 6.seconds, curve: Curves.easeInOut)
+                .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 4.seconds),
+          ),
+
+          SafeArea(
+            child: Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Logo with Soft Shadow & Animation
+                    Container(
+                      padding: const EdgeInsets.all(28),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                            blurRadius: 40,
+                            offset: const Offset(0, 15),
                           ),
                         ],
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    children: [
-                      const Expanded(child: Divider()),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text('OR', style: TextStyle(color: Colors.grey[400], fontWeight: FontWeight.bold)),
-                      ),
-                      const Expanded(child: Divider()),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      );
-                    },
-                    child: Text(
-                      'Sign In with Email',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                      );
-                    },
-                    child: Text(
-                      'Create an Account',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                  ),
-                ],
+                      child: Image.asset('assets/logo/logo.png', width: 120, height: 120),
+                    ).animate().scale(delay: 200.ms, duration: 600.ms, curve: Curves.easeOutBack).fadeIn(),
+
+                    const SizedBox(height: 48),
+
+                    // Title & Subtitle
+                    Column(
+                      children: [
+                        Text(
+                          'Footprynt',
+                          style: TextStyle(
+                            fontSize: 52,
+                            fontWeight: FontWeight.w900,
+                            color: theme.colorScheme.primary,
+                            letterSpacing: -2,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'TRACK • REDUCE • IMPACT',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.grey.shade500,
+                            letterSpacing: 5,
+                          ),
+                        ),
+                      ],
+                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
+
+                    const SizedBox(height: 80),
+
+                    // Action Buttons with Glass-like effect
+                    Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              try {
+                                await context.read<SupabaseService>().signInWithGoogle();
+                                if (context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const MainNavigation()),
+                                  );
+                                }
+                              } catch (e) {
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Error signing in: $e')),
+                                  );
+                                }
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: theme.colorScheme.primary,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 20),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.g_mobiledata, size: 32),
+                                SizedBox(width: 12),
+                                Text('Continue with Google'),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        
+                        // Glassmorphic Email Button
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                            child: Container(
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.6),
+                                borderRadius: BorderRadius.circular(24),
+                                border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
+                              ),
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                                  );
+                                },
+                                child: Text(
+                                  'Sign In with Email',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        
+                        const SizedBox(height: 32),
+                        
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                            );
+                          },
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
+                              children: [
+                                const TextSpan(text: "New here? "),
+                                TextSpan(
+                                  text: "Create an Account",
+                                  style: TextStyle(
+                                    color: theme.colorScheme.primary,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1, end: 0),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBlob(Color color, double size) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
       ),
     );
   }
@@ -299,7 +364,7 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: const Text('Sign In')),
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(32.0),
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -308,36 +373,41 @@ class _LoginScreenState extends State<LoginScreen> {
                 'Welcome Back',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 40,
                   fontWeight: FontWeight.w900,
                   color: theme.colorScheme.primary,
-                  letterSpacing: -1,
+                  letterSpacing: -1.5,
                 ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Sign in to continue your eco journey',
+              ).animate().fadeIn().slideY(begin: 0.1, end: 0),
+              const SizedBox(height: 12),
+              Text(
+                'Continue your journey to a greener\nplanet with us.',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
-              const SizedBox(height: 48),
+                style: TextStyle(
+                  color: Colors.grey.shade600,
+                  fontSize: 16,
+                  height: 1.5,
+                  fontWeight: FontWeight.w500,
+                ),
+              ).animate().fadeIn(delay: 200.ms),
+              const SizedBox(height: 60),
               TextField(
                 controller: _emailController,
                 decoration: const InputDecoration(
-                  labelText: 'Email',
+                  labelText: 'Email Address',
                   prefixIcon: Icon(Icons.email_outlined),
                 ),
-              ),
-              const SizedBox(height: 16),
+              ).animate().fadeIn(delay: 400.ms).slideX(begin: 0.05, end: 0),
+              const SizedBox(height: 20),
               TextField(
                 controller: _passwordController,
                 obscureText: true,
                 decoration: const InputDecoration(
                   labelText: 'Password',
-                  prefixIcon: Icon(Icons.lock_outline),
+                  prefixIcon: Icon(Icons.lock_outline_rounded),
                 ),
-              ),
-              const SizedBox(height: 32),
+              ).animate().fadeIn(delay: 500.ms).slideX(begin: 0.05, end: 0),
+              const SizedBox(height: 48),
               ElevatedButton(
                 onPressed: _isLoading ? null : () async {
                   setState(() => _isLoading = true);
@@ -356,7 +426,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   } catch (e) {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: $e')),
+                        SnackBar(
+                          content: Text('Error: $e'),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        ),
                       );
                     }
                   } finally {
@@ -366,10 +440,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 22),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+                  elevation: 0,
                 ),
                 child: _isLoading 
-                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+                  : const Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              ).animate().fadeIn(delay: 700.ms).scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1)),
+              const SizedBox(height: 32),
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Go Back',
+                  style: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w700),
+                ),
               ),
             ],
           ),
@@ -411,10 +496,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account'),
+        title: const Text('Join the Community'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(32.0),
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -429,43 +514,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         boxShadow: [
                           BoxShadow(
                             color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 5),
+                            blurRadius: 30,
+                            offset: const Offset(0, 10),
                           ),
                         ],
                       ),
                       child: CircleAvatar(
-                        radius: 60,
+                        radius: 65,
                         backgroundColor: theme.colorScheme.tertiary,
                         backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
                         child: _imageFile == null
-                            ? Icon(Icons.camera_alt_outlined, size: 40, color: theme.colorScheme.primary)
+                            ? Icon(Icons.add_a_photo_outlined, size: 36, color: theme.colorScheme.primary)
                             : null,
                       ),
                     ),
                     Positioned(
-                      bottom: 0,
-                      right: 0,
+                      bottom: 4,
+                      right: 4,
                       child: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: theme.colorScheme.primary,
                           shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
                         ),
-                        child: const Icon(Icons.add, color: Colors.white, size: 20),
+                        child: const Icon(Icons.edit_rounded, color: Colors.white, size: 16),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            const SizedBox(height: 48),
-            _buildTextField(_nameController, 'Full Name', Icons.person_outline),
-            _buildTextField(_emailController, 'Email', Icons.email_outlined),
-            _buildTextField(_passwordController, 'Password', Icons.lock_outline, obscure: true),
+            ).animate().scale(duration: 500.ms, curve: Curves.easeOutBack),
+            const SizedBox(height: 56),
+            _buildTextField(_nameController, 'Full Name', Icons.person_outline_rounded),
+            _buildTextField(_emailController, 'Email Address', Icons.email_outlined),
+            _buildTextField(_passwordController, 'Create Password', Icons.lock_outline_rounded, obscure: true),
             Row(
               children: [
-                Expanded(child: _buildTextField(_heightController, 'Height (cm)', Icons.height)),
+                Expanded(child: _buildTextField(_heightController, 'Height (cm)', Icons.height_rounded)),
                 const SizedBox(width: 16),
                 Expanded(child: _buildTextField(_weightController, 'Weight (kg)', Icons.monitor_weight_outlined)),
               ],
@@ -473,7 +559,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             _buildTextField(_nationalityController, 'Nationality', Icons.flag_outlined),
             _buildTextField(_countryController, 'Country', Icons.public_outlined),
             _buildTextField(_cityController, 'City', Icons.location_city_outlined),
-            _buildTextField(_carController, 'Car Model (or "Other")', Icons.directions_car_outlined),
+            _buildTextField(_carController, 'Car Model (Optional)', Icons.directions_car_outlined),
             const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () async {
@@ -499,10 +585,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-                        title: const Text('Account Created'),
+                        backgroundColor: Colors.white,
+                        surfaceTintColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+                        title: const Text('Account Created!', style: TextStyle(fontWeight: FontWeight.w900)),
                         content: const Text(
-                          'Your account has been created successfully! Please check your email for a confirmation link before signing in.',
+                          'Welcome aboard! Please check your email for a confirmation link to activate your account.',
+                          style: TextStyle(height: 1.5),
                         ),
                         actions: [
                           TextButton(
@@ -510,7 +599,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Navigator.pop(context); // Close dialog
                               Navigator.pop(context); // Go back to login/welcome
                             },
-                            child: Text('OK', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
+                            child: Text('Got it', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.w800, fontSize: 16)),
                           ),
                         ],
                       ),
@@ -521,9 +610,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text('Error: $e'),
-                        backgroundColor: Colors.redAccent,
+                        backgroundColor: theme.colorScheme.error,
                         behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       ),
                     );
                   }
@@ -532,10 +621,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 22),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
               ),
-              child: const Text('Create Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: const Text('Create Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 40),
           ],
         ),
       ),
@@ -544,15 +635,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool obscure = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.only(bottom: 24),
       child: TextField(
         controller: controller,
         obscureText: obscure,
+        style: const TextStyle(fontWeight: FontWeight.w600),
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, size: 22),
+          prefixIcon: Icon(icon, size: 24),
         ),
-      ),
+      ).animate().fadeIn(delay: 200.ms).slideX(begin: 0.05, end: 0),
     );
   }
 }
