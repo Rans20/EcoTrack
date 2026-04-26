@@ -24,7 +24,7 @@ void main() async {
   ///    - Add the Web Client ID to Supabase Google Provider configuration.
   await Supabase.initialize(
     url: 'https://gzwciujlrsaoxunqjojl.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6d2NpdWpscnNhb3h1bnFqb2psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTUxOTcsImV4cCI6MjA5MjE5MTE5N30.SRFiSebyzaK4J5nf0arK4Hg8xWvSZHzBdgGZV98jtwo ',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6d2NpdWpscnNhb3h1bnFqb2psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTUxOTcsImV4cCI6MjA5MjE5MTE5N30.SRFiSebyzaK4J5nf0arK4Hg8xWvSZHzBdgGZV98jtwo',
   );
 
   runApp(
@@ -375,15 +375,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         _imageFile,
                       );
                   if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Account created! Please check your email.')),
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Account Created'),
+                        content: const Text(
+                          'Your account has been created successfully! Please check your email for a confirmation link before signing in.',
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context); // Close dialog
+                              Navigator.pop(context); // Go back to login/welcome
+                            },
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
                     );
-                    Navigator.pop(context);
                   }
                 } catch (e) {
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
+                      SnackBar(
+                        content: Text('Error: $e'),
+                        backgroundColor: Colors.redAccent,
+                      ),
                     );
                   }
                 }

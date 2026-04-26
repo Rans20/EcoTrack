@@ -14,11 +14,11 @@ class SupabaseService {
     /// 2. Create an OAuth 2.0 Client ID for 'Web application'. Copy the 'Client ID' and paste it as [webClientId].
     /// 3. Create an OAuth 2.0 Client ID for 'iOS'. Copy the 'Client ID' and paste it as [iosClientId].
     /// 4. In Supabase Dashboard -> Auth -> Providers -> Google, enable it and paste the [webClientId].
-    const webClientId = '.878635206146-adailjatpcffen700grddbgi5s0iponl.apps.googleusercontent.com';
+    const webClientId = '878635206146-adailjatpcffen700grddbgi5s0iponl.apps.googleusercontent.com';
     const iosClientId = '878635206146-nujep5778aj1j6uvo1f8eddn7f92lmm7.apps.googleusercontent.com';
 
     final GoogleSignIn googleSignIn = GoogleSignIn(
-      clientId: iosClientId,
+      clientId: kIsWeb || Platform.isIOS ? iosClientId : webClientId,
       serverClientId: webClientId,
     );
     

@@ -14,6 +14,9 @@ class _MapScreenState extends State<MapScreen> {
   LocationData? _currentLocation;
   final Location _location = Location();
 
+  bool _isLoading = true;
+  String? _errorMessage;
+
   @override
   void initState() {
     super.initState();
@@ -21,23 +24,47 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Future<void> _initLocation() async {
-    bool serviceEnabled;
-    PermissionStatus permissionGranted;
+    try {
+      bool serviceEnabled;
+      PermissionStatus permissionGranted;
 
-    serviceEnabled = await _location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await _location.requestService();
-      if (!serviceEnabled) return;
+      serviceEnabled = await _location.serviceEnabled();
+      if (!serviceEnabled) {
+        serviceEnabled = await _location.requestService();
+        if (!serviceEnabled) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Location services are disabled.';
+          });
+          return;
+        }
+      }
+
+      permissionGranted = await _location.hasPermission();
+      if (permissionGranted == PermissionStatus.denied) {
+        permissionGranted = await _location.requestPermission();
+        if (permissionGranted != PermissionStatus.granted) {
+          setState(() {
+            _isLoading = false;
+            _errorMessage = 'Location permissions are denied.';
+          });
+          return;
+        }
+      }
+
+      _currentLocation = await _location.getLocation().timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw 'Location request timed out.';
+        },
+      );
+    } catch (e) {
+      setState(() {
+        _errorMessage = e.toString();
+      });
+    } finally {
+      setState(() => _isLoading = false);
     }
-
-    permissionGranted = await _location.hasPermission();
-    if (permissionGranted == PermissionStatus.denied) {
-      permissionGranted = await _location.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) return;
-    }
-
-    _currentLocation = await _location.getLocation();
-    setState(() {});
   }
 
   @override
@@ -59,8 +86,30 @@ class _MapScreenState extends State<MapScreen> {
               myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
             )
+          else if (_isLoading)
+            const Center(child: CircularProgressIndicator())
           else
-            const Center(child: CircularProgressIndicator()),
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.location_off, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  Text(_errorMessage ?? 'Could not retrieve location.'),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _isLoading = true;
+                        _errorMessage = null;
+                      });
+                      _initLocation();
+                    },
+                    child: const Text('Retry'),
+                  ),
+                ],
+              ),
+            ),
           
           // Top Overlay
           SafeArea(
