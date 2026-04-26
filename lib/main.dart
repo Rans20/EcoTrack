@@ -47,15 +47,48 @@ class FootpryntApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1E2A3A), // Dark Navy
-          primary: const Color(0xFF1B5E20), // Deep Green
-          secondary: const Color(0xFF00C853), // Emerald Green
-          tertiary: const Color(0xFF26A69A), // Teal
-          surface: const Color(0xFFF1F5F2), // Very Light Mint Gray
+          seedColor: const Color(0xFF6B8E23), // Olive/Sage Green
+          primary: const Color(0xFF4A6D4A), // Muted Forest
+          secondary: const Color(0xFF8DAA8D), // Soft Sage
+          tertiary: const Color(0xFFD9E2D9), // Pale Mist
+          surface: const Color(0xFFF9FBF9), // Warm White
         ),
         useMaterial3: true,
         fontFamily: 'Inter',
         scaffoldBackgroundColor: const Color(0xFFF9FBF9),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+          titleTextStyle: TextStyle(
+            color: Color(0xFF2D3436),
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: Colors.white,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(16),
+            borderSide: const BorderSide(color: Color(0xFF4A6D4A), width: 2),
+          ),
+        ),
       ),
       home: const AuthWrapper(),
     );
@@ -98,101 +131,139 @@ class WelcomeScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
+              theme.colorScheme.tertiary.withValues(alpha: 0.3),
               theme.colorScheme.surface,
-              Colors.white,
             ],
           ),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset('assets/logo/logo.png', width: 220, height: 220),
-              const SizedBox(height: 24),
-              const Text(
-                'Footprynt',
-                style: TextStyle(
-                  fontSize: 42,
-                  fontWeight: FontWeight.w900,
-                  color: Color(0xFF1E2A3A),
-                  letterSpacing: -1,
-                ),
-              ),
-              const Text(
-                'TRACK • REDUCE • IMPACT',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF546E7A),
-                  letterSpacing: 3,
-                ),
-              ),
-              const SizedBox(height: 64),
-              ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await context.read<SupabaseService>().signInWithGoogle();
-                    if (context.mounted) {
-                      Navigator.pushReplacement(
+        child: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                          blurRadius: 30,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Image.asset('assets/logo/logo.png', width: 140, height: 140),
+                  ),
+                  const SizedBox(height: 40),
+                  Text(
+                    'Footprynt',
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.w900,
+                      color: theme.colorScheme.primary,
+                      letterSpacing: -1.5,
+                    ),
+                  ),
+                  const Text(
+                    'TRACK • REDUCE • IMPACT',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF636E72),
+                      letterSpacing: 4,
+                    ),
+                  ),
+                  const SizedBox(height: 64),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        try {
+                          await context.read<SupabaseService>().signInWithGoogle();
+                          if (context.mounted) {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(builder: (context) => const MainNavigation()),
+                            );
+                          }
+                        } catch (e) {
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Error signing in: $e')),
+                            );
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 20),
+                        elevation: 0,
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.g_mobiledata, size: 28),
+                          SizedBox(width: 12),
+                          Text(
+                            'Sign in with Google',
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      const Expanded(child: Divider()),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Text('OR', style: TextStyle(color: Colors.grey[400], fontWeight: FontWeight.bold)),
+                      ),
+                      const Expanded(child: Divider()),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => const MainNavigation()),
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
                       );
-                    }
-                  } catch (e) {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error signing in: $e')),
+                    },
+                    child: Text(
+                      'Sign In with Email',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignUpScreen()),
                       );
-                    }
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1E2A3A),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 20),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                  elevation: 8,
-                  shadowColor: const Color(0xFF1E2A3A).withValues(alpha: 0.4),
-                ),
-                child: const Text(
-                  'Sign in with Google',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                  );
-                },
-                child: Text(
-                  'Sign In with Email',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: theme.colorScheme.primary,
+                    },
+                    child: Text(
+                      'Create an Account',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.grey[600],
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                  );
-                },
-                child: Text(
-                  'Create an Account',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey[600],
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -217,67 +288,82 @@ class _LoginScreenState extends State<LoginScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Sign In')),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: InputDecoration(
-                labelText: 'Email',
-                prefixIcon: const Icon(Icons.email),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                'Welcome Back',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  color: theme.colorScheme.primary,
+                  letterSpacing: -1,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: const Icon(Icons.lock),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              const SizedBox(height: 8),
+              const Text(
+                'Sign in to continue your eco journey',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey, fontSize: 16),
               ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _isLoading ? null : () async {
-                setState(() => _isLoading = true);
-                try {
-                  await context.read<SupabaseService>().signIn(
-                    _emailController.text.trim(),
-                    _passwordController.text.trim(),
-                  );
-                  if (context.mounted) {
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainNavigation()),
-                      (route) => false,
+              const SizedBox(height: 48),
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(
+                  labelText: 'Email',
+                  prefixIcon: Icon(Icons.email_outlined),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Password',
+                  prefixIcon: Icon(Icons.lock_outline),
+                ),
+              ),
+              const SizedBox(height: 32),
+              ElevatedButton(
+                onPressed: _isLoading ? null : () async {
+                  setState(() => _isLoading = true);
+                  try {
+                    await context.read<SupabaseService>().signIn(
+                      _emailController.text.trim(),
+                      _passwordController.text.trim(),
                     );
+                    if (context.mounted) {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MainNavigation()),
+                        (route) => false,
+                      );
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: $e')),
+                      );
+                    }
+                  } finally {
+                    if (mounted) setState(() => _isLoading = false);
                   }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
-                    );
-                  }
-                } finally {
-                  if (mounted) setState(() => _isLoading = false);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                ),
+                child: _isLoading 
+                  ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                  : const Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
               ),
-              child: _isLoading 
-                ? const CircularProgressIndicator(color: Colors.white)
-                : const Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -316,44 +402,70 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final theme = Theme.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Account', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: const Text('Create Account'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+        padding: const EdgeInsets.all(32.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Center(
               child: GestureDetector(
                 onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: theme.colorScheme.surfaceContainerHighest,
-                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
-                  child: _imageFile == null
-                      ? const Icon(Icons.add_a_photo, size: 30, color: Colors.grey)
-                      : null,
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                            blurRadius: 20,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 60,
+                        backgroundColor: theme.colorScheme.tertiary,
+                        backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
+                        child: _imageFile == null
+                            ? Icon(Icons.camera_alt_outlined, size: 40, color: theme.colorScheme.primary)
+                            : null,
+                      ),
+                    ),
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.add, color: Colors.white, size: 20),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 32),
-            _buildTextField(_nameController, 'Full Name', Icons.person),
-            _buildTextField(_emailController, 'Email', Icons.email),
-            _buildTextField(_passwordController, 'Password', Icons.lock, obscure: true),
+            const SizedBox(height: 48),
+            _buildTextField(_nameController, 'Full Name', Icons.person_outline),
+            _buildTextField(_emailController, 'Email', Icons.email_outlined),
+            _buildTextField(_passwordController, 'Password', Icons.lock_outline, obscure: true),
             Row(
               children: [
                 Expanded(child: _buildTextField(_heightController, 'Height (cm)', Icons.height)),
                 const SizedBox(width: 16),
-                Expanded(child: _buildTextField(_weightController, 'Weight (kg)', Icons.monitor_weight)),
+                Expanded(child: _buildTextField(_weightController, 'Weight (kg)', Icons.monitor_weight_outlined)),
               ],
             ),
-            _buildTextField(_nationalityController, 'Nationality', Icons.flag),
-            _buildTextField(_countryController, 'Country', Icons.public),
-            _buildTextField(_cityController, 'City', Icons.location_city),
-            _buildTextField(_carController, 'Car Model (or "Other")', Icons.directions_car),
-            const SizedBox(height: 40),
+            _buildTextField(_nationalityController, 'Nationality', Icons.flag_outlined),
+            _buildTextField(_countryController, 'Country', Icons.public_outlined),
+            _buildTextField(_cityController, 'City', Icons.location_city_outlined),
+            _buildTextField(_carController, 'Car Model (or "Other")', Icons.directions_car_outlined),
+            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () async {
                 try {
@@ -378,6 +490,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     showDialog(
                       context: context,
                       builder: (context) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
                         title: const Text('Account Created'),
                         content: const Text(
                           'Your account has been created successfully! Please check your email for a confirmation link before signing in.',
@@ -388,7 +501,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Navigator.pop(context); // Close dialog
                               Navigator.pop(context); // Go back to login/welcome
                             },
-                            child: const Text('OK'),
+                            child: Text('OK', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
                           ),
                         ],
                       ),
@@ -400,6 +513,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       SnackBar(
                         content: Text('Error: $e'),
                         backgroundColor: Colors.redAccent,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
                     );
                   }
@@ -408,11 +523,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: const Text('Sign Up', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              child: const Text('Create Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             ),
+            const SizedBox(height: 24),
           ],
         ),
       ),
@@ -421,16 +535,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Widget _buildTextField(TextEditingController controller, String label, IconData icon, {bool obscure = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 20),
       child: TextField(
         controller: controller,
         obscureText: obscure,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-          filled: true,
-          fillColor: Colors.white,
+          prefixIcon: Icon(icon, size: 22),
         ),
       ),
     );
@@ -455,59 +566,53 @@ class _MainNavigationState extends State<MainNavigation> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Scaffold(
       body: _screens[_currentIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFF1A237E).withValues(alpha: 0.1),
+              color: theme.colorScheme.primary.withValues(alpha: 0.08),
               blurRadius: 20,
               offset: const Offset(0, -5),
             ),
           ],
         ),
-        child: ClipRRect(
-          borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-          child: BottomNavigationBar(
-            currentIndex: _currentIndex,
-            onTap: (index) => setState(() => _currentIndex = index),
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: const Color(0xFF1E2A3A),
-            unselectedItemColor: const Color(0xFF90A4AE),
-            showSelectedLabels: true,
-            showUnselectedLabels: true,
-            items: const [
-              BottomNavigationBarItem(
-                icon: Icon(Icons.dashboard_rounded, size: 28),
-                activeIcon: Icon(Icons.dashboard_rounded, size: 32),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.map_rounded, size: 28),
-                activeIcon: Icon(Icons.map_rounded, size: 32),
-                label: 'Maps',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.emoji_events_rounded, size: 28),
-                activeIcon: Icon(Icons.emoji_events_rounded, size: 32),
-                label: 'Global',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.analytics_rounded, size: 28),
-                activeIcon: Icon(Icons.analytics_rounded, size: 32),
-                label: 'Stats',
-              ),
-            ],
-          ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,
+          onTap: (index) => setState(() => _currentIndex = index),
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          selectedItemColor: theme.colorScheme.primary,
+          unselectedItemColor: const Color(0xFFB2BEC3),
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w500, fontSize: 12),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.dashboard_outlined, size: 24),
+              activeIcon: Icon(Icons.dashboard_rounded, size: 28),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map_outlined, size: 24),
+              activeIcon: Icon(Icons.map_rounded, size: 28),
+              label: 'Maps',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.emoji_events_outlined, size: 24),
+              activeIcon: Icon(Icons.emoji_events_rounded, size: 28),
+              label: 'Impact',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.analytics_outlined, size: 24),
+              activeIcon: Icon(Icons.analytics_rounded, size: 28),
+              label: 'Stats',
+            ),
+          ],
         ),
       ),
     );

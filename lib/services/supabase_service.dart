@@ -70,14 +70,17 @@ class SupabaseService {
       final AuthResponse res = await client.auth.signUp(
         email: email, 
         password: password,
+        data: {
+          'full_name': profile.fullName,
+        },
       );
       
       final user = res.user;
       if (user == null) throw 'Signup failed: No user returned';
 
-      // NOTE: If 'Confirm Email' is ON in Supabase, the user is not authenticated yet.
-      // The profile creation below might fail if your RLS policies require authentication.
-      // Recommendation: Create profiles via a Database Webhook on 'auth.users' insert.
+      // We attempt to create the profile. If email confirmation is required,
+      // this might fail if RLS is strict and the user isn't 'authenticated' yet.
+      // However, we provide 'data' in signUp which Supabase stores in auth.users metadata.
       
       String? photoUrl;
       if (imageFile != null) {
@@ -101,13 +104,11 @@ class SupabaseService {
         createdAt: DateTime.now(),
       );
 
-      // We attempt to create the profile. If it fails due to RLS, it's likely 
-      // because the user hasn't confirmed their email yet.
       try {
         await client.from('profiles').upsert(newProfile.toJson());
       } catch (e) {
-        debugPrint('Profile creation failed (possibly due to RLS/unconfirmed email): $e');
-        // If email confirmation is required, this is expected to fail if RLS is strict.
+        debugPrint('Profile creation in public.profiles failed (expected if email confirmation is required): $e');
+        // This is often handled by a DB trigger on auth.users insert in Supabase.
       }
     } catch (e) {
       debugPrint('Error in signUp: $e');

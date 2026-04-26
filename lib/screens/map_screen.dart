@@ -10,7 +10,6 @@ class MapScreen extends StatefulWidget {
 }
 
 class _MapScreenState extends State<MapScreen> {
-  GoogleMapController? _controller;
   LocationData? _currentLocation;
   final Location _location = Location();
 
@@ -69,8 +68,9 @@ class _MapScreenState extends State<MapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryColor = Color(0xFF1A237E);
-    const accentColor = Color(0xFF00BFA5);
+    final theme = Theme.of(context);
+    final primaryColor = theme.colorScheme.primary;
+    final secondaryColor = theme.colorScheme.secondary;
 
     return Scaffold(
       body: Stack(
@@ -81,22 +81,24 @@ class _MapScreenState extends State<MapScreen> {
                 target: LatLng(_currentLocation!.latitude!, _currentLocation!.longitude!),
                 zoom: 15,
               ),
-              onMapCreated: (controller) => _controller = controller,
+              onMapCreated: (controller) {
+                // Use controller if needed later
+              },
               myLocationEnabled: true,
               myLocationButtonEnabled: false,
               zoomControlsEnabled: false,
             )
           else if (_isLoading)
-            const Center(child: CircularProgressIndicator())
+            Center(child: CircularProgressIndicator(color: primaryColor))
           else
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.location_off, size: 64, color: Colors.grey),
+                  const Icon(Icons.location_off_outlined, size: 64, color: Color(0xFFB2BEC3)),
                   const SizedBox(height: 16),
-                  Text(_errorMessage ?? 'Could not retrieve location.'),
-                  const SizedBox(height: 16),
+                  Text(_errorMessage ?? 'Could not retrieve location.', style: const TextStyle(color: Color(0xFF636E72), fontWeight: FontWeight.w500)),
+                  const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
@@ -105,6 +107,10 @@ class _MapScreenState extends State<MapScreen> {
                       });
                       _initLocation();
                     },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: primaryColor,
+                      foregroundColor: Colors.white,
+                    ),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -120,13 +126,19 @@ class _MapScreenState extends State<MapScreen> {
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.navigation, color: accentColor),
+                    Icon(Icons.navigation_outlined, color: secondaryColor),
                     const SizedBox(width: 12),
-                    const Text('Searching for low-emission paths...', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.w500)),
+                    const Text('Searching for low-emission paths...', style: TextStyle(color: Color(0xFF95A5A6), fontWeight: FontWeight.w600)),
                   ],
                 ),
               ),
@@ -141,9 +153,9 @@ class _MapScreenState extends State<MapScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _buildTypeSelector(accentColor),
+                _buildTypeSelector(theme),
                 const SizedBox(height: 16),
-                _buildSuggestionBox(primaryColor, accentColor),
+                _buildSuggestionBox(theme),
               ],
             ),
           ),
@@ -152,26 +164,41 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildTypeSelector(Color accentColor) {
+  Widget _buildTypeSelector(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(24),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 10)],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Row(
         children: ['Driving', 'Hiking', 'Walking'].map((type) {
           final isSelected = type == 'Hiking';
           return Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFF1A237E) : Colors.transparent,
-                borderRadius: BorderRadius.circular(18),
+            child: GestureDetector(
+              onTap: () {},
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  color: isSelected ? theme.colorScheme.primary : Colors.transparent,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  type,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
-              alignment: Alignment.center,
-              child: Text(type, style: TextStyle(color: isSelected ? Colors.white : const Color(0xFF1A237E), fontWeight: FontWeight.bold)),
             ),
           );
         }).toList(),
@@ -179,37 +206,56 @@ class _MapScreenState extends State<MapScreen> {
     );
   }
 
-  Widget _buildSuggestionBox(Color primaryColor, Color accentColor) {
+  Widget _buildSuggestionBox(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(32),
-        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 20)],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 25,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(Icons.eco, color: accentColor, size: 20),
+              Icon(Icons.eco_outlined, color: theme.colorScheme.secondary, size: 20),
               const SizedBox(width: 10),
-              Text('OPTIMAL ROUTE FOUND', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: accentColor, letterSpacing: 1)),
+              Text(
+                'OPTIMAL ROUTE FOUND',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w900,
+                  color: theme.colorScheme.secondary,
+                  letterSpacing: 1,
+                ),
+              ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text('Shorter route via Oak Avenue', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: primaryColor)),
-          const Text('2.4 km shorter, 8 min faster', style: TextStyle(fontSize: 15, color: Colors.teal, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 20),
+          const SizedBox(height: 12),
+          Text(
+            'Shorter route via Oak Avenue',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: theme.colorScheme.primary, letterSpacing: -0.5),
+          ),
+          Text(
+            '2.4 km shorter, 8 min faster',
+            style: TextStyle(fontSize: 15, color: theme.colorScheme.secondary, fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
+                backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 18),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
               ),
               child: const Text('Start Journey', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
             ),

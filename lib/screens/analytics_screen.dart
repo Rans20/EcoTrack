@@ -7,25 +7,25 @@ class AnalyticsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary; // Deep Green
-    final accentColor = theme.colorScheme.secondary; // Emerald
-    final tertiaryColor = theme.colorScheme.tertiary; // Teal
+    final primaryColor = theme.colorScheme.primary;
+    final secondaryColor = theme.colorScheme.secondary;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(primaryColor, tertiaryColor),
+              _buildHeader(theme),
               const SizedBox(height: 32),
-              _buildStatsRow(primaryColor, accentColor, tertiaryColor),
+              _buildStatsRow(theme),
+              const SizedBox(height: 32),
+              _buildChartCard(theme, 'Emission Trends', _buildLineChart(secondaryColor)),
+              const SizedBox(height: 32),
+              _buildChartCard(theme, 'Impact by Activity', _buildBarChart(primaryColor)),
               const SizedBox(height: 24),
-              _buildChartCard('Emission Trends', primaryColor, _buildLineChart(tertiaryColor)),
-              const SizedBox(height: 24),
-              _buildChartCard('Impact by Activity', primaryColor, _buildBarChart(accentColor)),
             ],
           ),
         ),
@@ -33,75 +33,119 @@ class AnalyticsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(Color primaryColor, Color tertiaryColor) {
+  Widget _buildHeader(ThemeData theme) {
     return Row(
       children: [
         Container(
-          width: 64,
-          height: 64,
+          width: 60,
+          height: 60,
           decoration: BoxDecoration(
-            color: primaryColor,
+            color: theme.colorScheme.primary,
             borderRadius: BorderRadius.circular(20),
-            boxShadow: [BoxShadow(color: primaryColor.withValues(alpha: 0.2), blurRadius: 12, offset: const Offset(0, 4))],
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
           ),
           child: const Icon(Icons.analytics_rounded, color: Colors.white, size: 30),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 20),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Analytics', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w800, color: primaryColor)),
-            Text('Environmental footprint', style: TextStyle(fontSize: 14, color: tertiaryColor, fontWeight: FontWeight.w600)),
+            Text(
+              'Analytics',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+                color: theme.colorScheme.primary,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const Text(
+              'Environmental footprint',
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF95A5A6),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildStatsRow(Color primaryColor, Color accentColor, Color tertiaryColor) {
+  Widget _buildStatsRow(ThemeData theme) {
     return Row(
       children: [
-        Expanded(child: _buildStatBox('Avg kg/day', '2.4', Icons.trending_up_rounded, tertiaryColor)),
+        Expanded(child: _buildStatBox(theme, 'Avg kg/day', '2.4', Icons.trending_up_rounded, theme.colorScheme.secondary)),
         const SizedBox(width: 16),
-        Expanded(child: _buildStatBox('Total kg (6mo)', '432.1', Icons.eco_rounded, accentColor)),
+        Expanded(child: _buildStatBox(theme, 'Total kg (6mo)', '432.1', Icons.eco_rounded, theme.colorScheme.primary)),
       ],
     );
   }
 
-  Widget _buildStatBox(String label, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 15, offset: const Offset(0, 8))],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 12),
-          Text(value, style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: Colors.blueGrey.shade900)),
-          Text(label, style: TextStyle(fontSize: 12, color: Colors.blueGrey.shade400, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildChartCard(String title, Color primaryColor, Widget chart) {
+  Widget _buildStatBox(ThemeData theme, String label, String value, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(28),
-        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 20, offset: const Offset(0, 10))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(color: color.withValues(alpha: 0.1), shape: BoxShape.circle),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            value,
+            style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: theme.colorScheme.primary, letterSpacing: -1),
+          ),
+          Text(
+            label,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF95A5A6), fontWeight: FontWeight.w700, letterSpacing: 0.5),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChartCard(ThemeData theme, String title, Widget chart) {
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 25,
+            offset: const Offset(0, 15),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: primaryColor)),
-          const SizedBox(height: 28),
+          Text(
+            title,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: theme.colorScheme.primary),
+          ),
+          const SizedBox(height: 32),
           SizedBox(height: 200, child: chart),
         ],
       ),

@@ -31,32 +31,42 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final primaryColor = theme.colorScheme.primary; // Deep Green
-    final accentColor = theme.colorScheme.secondary; // Emerald Green
-    final tertiaryColor = theme.colorScheme.tertiary; // Teal
-
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(primaryColor, tertiaryColor),
-              const SizedBox(height: 24),
-              _buildWeatherCard(primaryColor, tertiaryColor),
-              const SizedBox(height: 24),
-              _buildDashboardCard(primaryColor, accentColor, tertiaryColor),
+              _buildHeader(theme),
               const SizedBox(height: 32),
-              Text(
-                'Eco Actions',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: primaryColor.withValues(alpha: 0.8)),
+              _buildDashboardCard(theme),
+              const SizedBox(height: 32),
+              _buildWeatherCard(theme),
+              const SizedBox(height: 32),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Eco Actions',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w800,
+                      color: theme.colorScheme.primary.withValues(alpha: 0.8),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {},
+                    child: Text('See All', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.bold)),
+                  ),
+                ],
               ),
-              const SizedBox(height: 16),
-              _buildGrid(context, primaryColor, accentColor, tertiaryColor),
+              const SizedBox(height: 12),
+              _buildGrid(context, theme),
+              const SizedBox(height: 32),
+              _buildTipCard(theme),
               const SizedBox(height: 24),
-              _buildTipCard(tertiaryColor),
             ],
           ),
         ),
@@ -64,105 +74,170 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader(Color primaryColor, Color tertiaryColor) {
+  Widget _buildHeader(ThemeData theme) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Hello, EcoWarrior', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: primaryColor)),
-            const Text('Monday, October 14', style: TextStyle(fontSize: 14, color: Color(0xFF78909C), fontWeight: FontWeight.w600)),
+            Text(
+              'Hello, EcoWarrior',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+                color: theme.colorScheme.primary,
+                letterSpacing: -0.5,
+              ),
+            ),
+            const Text(
+              'Monday, October 14',
+              style: TextStyle(
+                fontSize: 14,
+                color: Color(0xFF95A5A6),
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
         Container(
-          width: 52,
-          height: 52,
+          width: 56,
+          height: 56,
           decoration: BoxDecoration(
-            color: tertiaryColor.withValues(alpha: 0.1),
+            color: Colors.white,
             shape: BoxShape.circle,
-            border: Border.all(color: tertiaryColor.withValues(alpha: 0.2), width: 2),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
+              ),
+            ],
+            border: Border.all(color: theme.colorScheme.tertiary.withValues(alpha: 0.5), width: 2),
           ),
           alignment: Alignment.center,
-          child: Icon(Icons.person, color: tertiaryColor),
+          child: Icon(Icons.person_outline, color: theme.colorScheme.primary, size: 28),
         ),
       ],
     );
   }
 
-  Widget _buildWeatherCard(Color primaryColor, Color tertiaryColor) {
+  Widget _buildWeatherCard(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.03), blurRadius: 15, offset: const Offset(0, 8))],
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.wb_sunny, color: Colors.orangeAccent, size: 24),
+              const Icon(Icons.wb_sunny_rounded, color: Color(0xFFFFBE76), size: 28),
               const SizedBox(width: 12),
-              Text('Sunny • 22°C', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: primaryColor)),
+              Text(
+                'Sunny • 22°C',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                decoration: BoxDecoration(color: tertiaryColor.withValues(alpha: 0.1), borderRadius: BorderRadius.circular(10)),
-                child: Text('AI ADVISOR', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w900, color: tertiaryColor)),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'AI ADVISOR',
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                    color: theme.colorScheme.primary,
+                    letterSpacing: 0.5,
+                  ),
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 14),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
             "It's a sunny day! Great time to bike or walk and soak up some Vitamin D while saving CO₂.",
-            style: TextStyle(fontSize: 15, color: Colors.blueGrey.shade700, fontWeight: FontWeight.w500, height: 1.4),
+            style: TextStyle(
+              fontSize: 15,
+              color: Color(0xFF636E72),
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildDashboardCard(Color primaryColor, Color accentColor, Color tertiaryColor) {
+  Widget _buildDashboardCard(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.all(32),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [primaryColor, primaryColor.withBlue(40)],
+          colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(30),
-        boxShadow: [BoxShadow(color: primaryColor.withValues(alpha: 0.25), blurRadius: 20, offset: const Offset(0, 12))],
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+            blurRadius: 25,
+            offset: const Offset(0, 15),
+          ),
+        ],
       ),
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text('Live CO₂ Impact', style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600)),
+              const Text(
+                'Live CO₂ Impact',
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+              ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(12)),
-                child: Row(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Row(
                   children: [
-                    Icon(Icons.circle, size: 8, color: accentColor),
-                    const SizedBox(width: 6),
-                    const Text('Tracking', style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                    Icon(Icons.circle, size: 8, color: Colors.white),
+                    SizedBox(width: 6),
+                    Text(
+                      'Tracking',
+                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildDashboardStat(todayCo2.toStringAsFixed(1), 'kg CO₂ today'),
-              Container(width: 1, height: 40, color: Colors.white24),
-              _buildDashboardStat('142', 'Points earned'),
+              Container(width: 1, height: 48, color: Colors.white.withValues(alpha: 0.2)),
+              _buildDashboardStat('142', 'Eco Points'),
             ],
           ),
         ],
@@ -173,62 +248,83 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildDashboardStat(String value, String label) {
     return Column(
       children: [
-        Text(value, style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: Colors.white)),
-        Text(label, style: const TextStyle(fontSize: 13, color: Colors.white60, fontWeight: FontWeight.w500)),
+        Text(
+          value,
+          style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: -1),
+        ),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: Colors.white.withValues(alpha: 0.7),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildGrid(BuildContext context, Color primaryColor, Color accentColor, Color tertiaryColor) {
+  Widget _buildGrid(BuildContext context, ThemeData theme) {
     return GridView.count(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       crossAxisCount: 2,
       crossAxisSpacing: 16,
       mainAxisSpacing: 16,
-      childAspectRatio: 0.9,
+      childAspectRatio: 0.85,
       children: [
-        _buildGridCard(Icons.map, 'Eco Maps', 'Smart routes', tertiaryColor.withValues(alpha: 0.08), tertiaryColor),
-        _buildGridCard(Icons.pie_chart, 'Analytics', 'CO2 Insights', accentColor.withValues(alpha: 0.08), accentColor),
-        _buildGridCard(Icons.emoji_events, 'Global Board', 'Top Savers', Colors.amber.withValues(alpha: 0.08), Colors.amber.shade800),
-        _buildGridCard(Icons.trending_up, 'Milestones', 'Achievements', Colors.blue.withValues(alpha: 0.08), Colors.blue.shade700),
+        _buildGridCard(theme, Icons.map_outlined, 'Eco Maps', 'Smart routes', const Color(0xFFDFF9FB), const Color(0xFF22A6B3)),
+        _buildGridCard(theme, Icons.pie_chart_outline, 'Analytics', 'CO₂ Insights', const Color(0xFFF1F2F6), const Color(0xFF535C68)),
+        _buildGridCard(theme, Icons.emoji_events_outlined, 'Impact Board', 'Top Savers', const Color(0xFFFEF9E7), const Color(0xFFF1C40F)),
+        _buildGridCard(theme, Icons.auto_awesome_outlined, 'Milestones', 'Achievements', const Color(0xFFEBF5FB), const Color(0xFF3498DB)),
       ],
     );
   }
 
-  Widget _buildGridCard(IconData icon, String title, String subtitle, Color bgColor, Color iconColor) {
+  Widget _buildGridCard(ThemeData theme, IconData icon, String title, String subtitle, Color bgColor, Color iconColor) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFECEFF1).withValues(alpha: 0.5)),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4))],
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(16)),
-            child: Icon(icon, color: iconColor, size: 24),
+            decoration: BoxDecoration(color: bgColor.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(16)),
+            child: Icon(icon, color: iconColor, size: 26),
           ),
           const Spacer(),
-          Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Colors.blueGrey.shade900)),
-          const SizedBox(height: 2),
-          Text(subtitle, style: TextStyle(fontSize: 12, color: Colors.blueGrey.shade400, fontWeight: FontWeight.w600)),
+          Text(
+            title,
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: theme.colorScheme.primary),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 12, color: Color(0xFF95A5A6), fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTipCard(Color tertiaryColor) {
+  Widget _buildTipCard(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
-        color: tertiaryColor.withValues(alpha: 0.05),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: tertiaryColor.withValues(alpha: 0.15)),
+        color: theme.colorScheme.tertiary.withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: theme.colorScheme.tertiary.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -236,14 +332,26 @@ class _HomeScreenState extends State<HomeScreen> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('AI Tip of the Day', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: tertiaryColor.withValues(alpha: 0.8))),
-              Icon(Icons.lightbulb_outline, size: 20, color: tertiaryColor),
+              Text(
+                'AI Tip of the Day',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  color: theme.colorScheme.primary,
+                ),
+              ),
+              Icon(Icons.lightbulb_rounded, size: 24, color: theme.colorScheme.primary),
             ],
           ),
-          const SizedBox(height: 12),
-          Text(
+          const SizedBox(height: 16),
+          const Text(
             'Replace one car trip per week with biking or walking to reduce your footprint significantly.',
-            style: TextStyle(fontSize: 14, color: Colors.blueGrey.shade700, fontWeight: FontWeight.w500, height: 1.5),
+            style: TextStyle(
+              fontSize: 14,
+              color: Color(0xFF2D3436),
+              fontWeight: FontWeight.w500,
+              height: 1.6,
+            ),
           ),
         ],
       ),
