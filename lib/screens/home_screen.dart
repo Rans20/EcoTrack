@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:location/location.dart';
 import '../services/supabase_service.dart';
+import '../services/weather_service.dart';
+import '../services/ai_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,6 +15,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   double todayCo2 = 0.0;
   bool loading = true;
+  Map<String, dynamic>? weatherData;
+  String aiTip = 'Loading your personalized eco-tip...';
+  String aiWeatherSuggestion = 'Fetching weather insights...';
 
   @override
   void initState() {
@@ -20,12 +26,36 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadData() async {
-    final service = context.read<SupabaseService>();
-    final co2 = await service.getTodayCo2Kg();
-    setState(() {
-      todayCo2 = co2;
-      loading = false;
-    });
+    final supabase = context.read<SupabaseService>();
+    final weatherService = context.read<WeatherService>();
+    final aiService = context.read<AiService>();
+    
+    final co2 = await supabase.getTodayCo2Kg();
+    
+    // Get location for weather
+    final location = Location();
+    LocationData? locData;
+    try {
+      locData = await location.getLocation();
+    } catch (e) {
+      debugPrint('Error getting location: $e');
+    }
+
+    if (locData != null) {
+      weatherData = await weatherService.getWeather(locData.latitude!, locData.longitude!);
+    } else {
+      weatherData = {'temp': 22.0, 'description': 'Sunny', 'icon': '01d'};
+    }
+
+    aiTip = aiService.getSuggestion(weatherData!);
+    aiWeatherSuggestion = aiService.getMorningNotification(weatherData!);
+
+    if (mounted) {
+      setState(() {
+        todayCo2 = co2;
+        loading = false;
+      });
+    }
   }
 
   @override
@@ -123,6 +153,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildWeatherCard(ThemeData theme) {
+    final temp = weatherData?['temp'] ?? '--';
+    final desc = weatherData?['description'] ?? 'Loading...';
+    
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
@@ -144,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const Icon(Icons.wb_sunny_rounded, color: Color(0xFFFFBE76), size: 28),
               const SizedBox(width: 12),
               Text(
-                'Sunny • 22°C',
+                '$desc • ${temp}°C',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -171,9 +204,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            "It's a sunny day! Great time to bike or walk and soak up some Vitamin D while saving CO₂.",
-            style: TextStyle(
+          Text(
+            aiWeatherSuggestion,
+            style: const TextStyle(
               fontSize: 15,
               color: Color(0xFF636E72),
               fontWeight: FontWeight.w500,
@@ -344,9 +377,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          const Text(
-            'Replace one car trip per week with biking or walking to reduce your footprint significantly.',
-            style: TextStyle(
+          Text(
+            aiTip,
+            style: const TextStyle(
               fontSize: 14,
               color: Color(0xFF2D3436),
               fontWeight: FontWeight.w500,

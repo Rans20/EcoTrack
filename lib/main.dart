@@ -5,6 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'models/user_profile.dart';
 import 'services/supabase_service.dart';
+import 'services/weather_service.dart';
+import 'services/ai_service.dart';
+import 'services/notification_service.dart';
+import 'services/ride_hailing_service.dart';
 import 'screens/home_screen.dart';
 import 'screens/leaderboard_screen.dart';
 import 'screens/analytics_screen.dart';
@@ -13,24 +17,29 @@ import 'screens/map_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  /// SETUP INSTRUCTIONS FOR SUPABASE:
-  /// 1. Go to Supabase Dashboard -> Project Settings -> API.
-  /// 2. Copy 'Project URL' and 'anon key' (Public).
-  /// 3. Go to Auth -> Providers:
-  ///    - Email: Enable 'Confirm Email' if you want verification (requires additional handling for profile creation).
-  ///    - Google: Enable and provide Client ID from Google Cloud Console.
-  /// 4. For Google Sign-In on Android:
-  ///    - Add SHA-1 fingerprint to Google Cloud Console and Firebase (if using google-services.json).
-  ///    - Add the Web Client ID to Supabase Google Provider configuration.
+  // Initialize Notifications
+  final notificationService = NotificationService();
+  await notificationService.init();
+
   await Supabase.initialize(
     url: 'https://gzwciujlrsaoxunqjojl.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6d2NpdWpscnNhb3h1bnFqb2psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTUxOTcsImV4cCI6MjA5MjE5MTE5N30.SRFiSebyzaK4J5nf0arK4Hg8xWvSZHzBdgGZV98jtwo',
+  );
+
+  // Schedule daily notification (Mocking weather for now, in a real app this would fetch weather first)
+  await notificationService.scheduleDaily6AmNotification(
+    'Good morning!',
+    'Check out your personalized eco-tip for today based on the weather!',
   );
 
   runApp(
     MultiProvider(
       providers: [
         Provider<SupabaseService>(create: (_) => SupabaseService()),
+        Provider<WeatherService>(create: (_) => WeatherService(apiKey: 'YOUR_WEATHER_API_KEY')),
+        Provider<AiService>(create: (_) => AiService()),
+        Provider<NotificationService>(create: (_) => notificationService),
+        Provider<RideHailingService>(create: (_) => RideHailingService()),
       ],
       child: const FootpryntApp(),
     ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
+import '../services/ride_hailing_service.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -15,6 +17,7 @@ class _MapScreenState extends State<MapScreen> {
 
   bool _isLoading = true;
   String? _errorMessage;
+  String _selectedType = 'Walking';
 
   @override
   void initState() {
@@ -179,11 +182,11 @@ class _MapScreenState extends State<MapScreen> {
         ],
       ),
       child: Row(
-        children: ['Driving', 'Hiking', 'Walking'].map((type) {
-          final isSelected = type == 'Hiking';
+        children: ['Driving', 'Ride-Hailing', 'Walking'].map((type) {
+          final isSelected = type == _selectedType;
           return Expanded(
             child: GestureDetector(
-              onTap: () {},
+              onTap: () => setState(() => _selectedType = type),
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 decoration: BoxDecoration(
@@ -196,6 +199,7 @@ class _MapScreenState extends State<MapScreen> {
                   style: TextStyle(
                     color: isSelected ? Colors.white : theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
+                    fontSize: 12,
                   ),
                 ),
               ),
@@ -207,6 +211,8 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   Widget _buildSuggestionBox(ThemeData theme) {
+    final isRideHailing = _selectedType == 'Ride-Hailing';
+    
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -228,7 +234,7 @@ class _MapScreenState extends State<MapScreen> {
               Icon(Icons.eco_outlined, color: theme.colorScheme.secondary, size: 20),
               const SizedBox(width: 10),
               Text(
-                'OPTIMAL ROUTE FOUND',
+                isRideHailing ? 'ECO RIDE SUGGESTED' : 'OPTIMAL ROUTE FOUND',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w900,
@@ -240,26 +246,64 @@ class _MapScreenState extends State<MapScreen> {
           ),
           const SizedBox(height: 12),
           Text(
-            'Shorter route via Oak Avenue',
+            isRideHailing ? 'Book an Eco-friendly Ride' : 'Shorter route via Oak Avenue',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: theme.colorScheme.primary, letterSpacing: -0.5),
           ),
           Text(
-            '2.4 km shorter, 8 min faster',
+            isRideHailing ? 'Reduce emissions by 30% with EV options' : '2.4 km shorter, 8 min faster',
             style: TextStyle(fontSize: 15, color: theme.colorScheme.secondary, fontWeight: FontWeight.w700),
           ),
           const SizedBox(height: 24),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 18),
+          if (isRideHailing)
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      context.read<RideHailingService>().openUber(
+                        _currentLocation?.latitude ?? 0,
+                        _currentLocation?.longitude ?? 0,
+                        'My Destination'
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Uber Eco'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      context.read<RideHailingService>().openLyft(
+                        _currentLocation?.latitude ?? 0,
+                        _currentLocation?.longitude ?? 0,
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFF00BF),
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Lyft Pink'),
+                  ),
+                ),
+              ],
+            )
+          else
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                onPressed: () {},
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 18),
+                ),
+                child: const Text('Start Journey', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
               ),
-              child: const Text('Start Journey', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
             ),
-          ),
         ],
       ),
     );
