@@ -22,16 +22,18 @@ class NotificationService {
       iOS: initializationSettingsIOS,
     );
 
-    await _notificationsPlugin.initialize(initializationSettings);
+    await _notificationsPlugin.initialize(
+      settings: initializationSettings,
+    );
   }
 
   Future<void> scheduleDaily6AmNotification(String title, String body) async {
     await _notificationsPlugin.zonedSchedule(
-      0,
-      title,
-      body,
-      _nextInstanceOfSixAM(),
-      const NotificationDetails(
+      id: 0,
+      title: title,
+      body: body,
+      scheduledDate: _nextInstanceOfSixAM(),
+      notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'eco_daily_channel',
           'Eco Daily Notifications',
@@ -42,8 +44,6 @@ class NotificationService {
         iOS: DarwinNotificationDetails(),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
