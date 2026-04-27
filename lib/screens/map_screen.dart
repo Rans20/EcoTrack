@@ -322,15 +322,16 @@ class _MapScreenState extends State<MapScreen> {
 
   Widget _buildSuggestionBox(ThemeData theme) {
     final isRideHailing = _selectedType == 'Ride-Hailing';
+    final co2Saved = context.read<RideHailingService>().calculateCo2Saved(5.2); // Mock 5.2km trip
     
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(36),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 30,
             offset: const Offset(0, 15),
           ),
@@ -340,42 +341,64 @@ class _MapScreenState extends State<MapScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.secondary.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(12),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.eco_rounded, color: theme.colorScheme.primary, size: 16),
-                    const SizedBox(width: 6),
+                    Icon(Icons.eco_rounded, color: theme.colorScheme.primary, size: 18),
+                    const SizedBox(width: 8),
                     Text(
-                      isRideHailing ? 'ECO RIDE' : 'OPTIMAL',
+                      isRideHailing ? 'ECO-FRIENDLY RIDE' : 'LOW-EMISSION ROUTE',
                       style: TextStyle(
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: FontWeight.w900,
                         color: theme.colorScheme.primary,
-                        letterSpacing: 1.2,
+                        letterSpacing: 0.8,
                       ),
                     ),
                   ],
                 ),
               ),
+              if (isRideHailing)
+                Text(
+                  '~${co2Saved.toStringAsFixed(2)}kg CO₂ Saved',
+                  style: TextStyle(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13,
+                  ),
+                ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
-            isRideHailing ? 'Book an Eco-friendly Ride' : 'Shorter route via Oak Avenue',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: theme.colorScheme.primary, letterSpacing: -0.8),
+            isRideHailing ? 'Suggesting Green Rides' : 'Optimized Path Found',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w900,
+              color: theme.colorScheme.primary,
+              letterSpacing: -0.5,
+            ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 6),
           Text(
-            isRideHailing ? 'Reduce emissions by 30% with EV options' : '2.4 km shorter • 8 min faster',
-            style: TextStyle(fontSize: 15, color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+            isRideHailing 
+              ? 'Book an EV or Hybrid to minimize your carbon impact.' 
+              : 'This route avoids high-traffic zones, reducing idle emissions.',
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w500,
+              height: 1.4,
+            ),
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 28),
           if (isRideHailing)
             Row(
               children: [
@@ -385,15 +408,17 @@ class _MapScreenState extends State<MapScreen> {
                       context.read<RideHailingService>().openUber(
                         _currentLocation?.latitude ?? 0,
                         _currentLocation?.longitude ?? 0,
-                        'My Destination'
+                        'Target Destination'
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      elevation: 4,
+                      shadowColor: Colors.black26,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
                     ),
-                    child: const Text('Uber Eco'),
+                    child: const Text('Uber Green'),
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -408,9 +433,11 @@ class _MapScreenState extends State<MapScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFFF00BF),
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                      elevation: 4,
+                      shadowColor: const Color(0xFFFF00BF).withValues(alpha: 0.3),
+                      padding: const EdgeInsets.symmetric(vertical: 18),
                     ),
-                    child: const Text('Lyft Pink'),
+                    child: const Text('Lyft Eco'),
                   ),
                 ),
               ],
@@ -424,9 +451,8 @@ class _MapScreenState extends State<MapScreen> {
                   backgroundColor: theme.colorScheme.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 20),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
                 ),
-                child: const Text('Start Journey', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+                child: const Text('Navigate Eco-Route', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
               ),
             ),
         ],

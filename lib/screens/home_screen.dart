@@ -157,15 +157,15 @@ class _HomeScreenState extends State<HomeScreen> {
     final desc = weatherData?['description'] ?? 'Loading...';
     
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(28),
+        borderRadius: BorderRadius.circular(32),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
+            color: Colors.black.withValues(alpha: 0.03),
+            blurRadius: 30,
+            offset: const Offset(0, 15),
           ),
         ],
       ),
@@ -174,22 +174,43 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Row(
             children: [
-              const Icon(Icons.wb_sunny_rounded, color: Color(0xFFFFBE76), size: 28),
-              const SizedBox(width: 12),
-              Text(
-                '$desc • ${temp}°C',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: theme.colorScheme.primary,
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.amber.withValues(alpha: 0.1),
+                  shape: BoxShape.circle,
                 ),
+                child: const Icon(Icons.wb_sunny_rounded, color: Colors.amber, size: 24),
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '$desc • $temp°C',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: theme.colorScheme.primary,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  Text(
+                    'Current Weather',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ],
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(10),
                 ),
                 child: Text(
                   'AI ADVISOR',
@@ -197,20 +218,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 10,
                     fontWeight: FontWeight.w900,
                     color: theme.colorScheme.primary,
-                    letterSpacing: 0.5,
+                    letterSpacing: 1,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            aiWeatherSuggestion,
-            style: const TextStyle(
-              fontSize: 15,
-              color: Color(0xFF636E72),
-              fontWeight: FontWeight.w500,
-              height: 1.5,
+          const SizedBox(height: 24),
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.tertiary.withValues(alpha: 0.3),
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Text(
+              aiWeatherSuggestion,
+              style: TextStyle(
+                fontSize: 14,
+                color: theme.colorScheme.primary.withValues(alpha: 0.9),
+                fontWeight: FontWeight.w600,
+                height: 1.5,
+              ),
             ),
           ),
         ],
@@ -220,19 +248,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDashboardCard(ThemeData theme) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      padding: const EdgeInsets.all(36),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [theme.colorScheme.primary, theme.colorScheme.secondary],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(36),
         boxShadow: [
           BoxShadow(
-            color: theme.colorScheme.primary.withValues(alpha: 0.2),
-            blurRadius: 25,
-            offset: const Offset(0, 15),
+            color: theme.colorScheme.primary.withValues(alpha: 0.25),
+            blurRadius: 35,
+            offset: const Offset(0, 20),
           ),
         ],
       ),
@@ -243,33 +271,33 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               const Text(
                 'Live CO₂ Impact',
-                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
+                style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w800),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.circle, size: 8, color: Colors.white),
-                    SizedBox(width: 6),
+                    Icon(Icons.insights_rounded, size: 16, color: Colors.white),
+                    SizedBox(width: 8),
                     Text(
-                      'Tracking',
-                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                      'Live',
+                      style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w900),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 32),
+          const SizedBox(height: 40),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildDashboardStat(todayCo2.toStringAsFixed(1), 'kg CO₂ today'),
-              Container(width: 1, height: 48, color: Colors.white.withValues(alpha: 0.2)),
+              Container(width: 1.5, height: 50, color: Colors.white.withValues(alpha: 0.2)),
               _buildDashboardStat('142', 'Eco Points'),
             ],
           ),

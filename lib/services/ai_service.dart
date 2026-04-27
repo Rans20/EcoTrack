@@ -3,14 +3,16 @@ class AiService {
     final temp = weatherData['temp'] as double;
     final description = weatherData['description'] as String;
 
-    if (description.contains('Rain') || description.contains('Thunderstorm')) {
-      return 'It’s rainy today. Consider carpooling or using public transit to stay dry while reducing emissions compared to solo driving.';
-    } else if (temp > 20 && description.contains('Clear')) {
-      return 'Perfect weather for a bike ride! You can save roughly 0.4kg of CO2 per kilometer compared to driving.';
-    } else if (temp < 10) {
-      return 'It’s a bit chilly. If you must drive, ensure your tires are properly inflated to optimize fuel efficiency and reduce CO2.';
+    if (description.contains('Rain') || description.contains('Thunderstorm') || description.contains('Showers')) {
+      return 'Rainy weather today. Emissions-friendly tip: Use public transit or carpool to reduce the high carbon impact of individual car trips in heavy traffic.';
+    } else if (temp > 18 && (description == 'Clear' || description == 'Partly Cloudy')) {
+      return 'It’s a beautiful day! Choosing to walk or bike instead of driving can reduce your daily CO2 footprint by up to 2-3kg.';
+    } else if (temp < 8) {
+      return 'Cold weather alert. If you must drive, optimize your car’s warmth and tire pressure to save up to 10% on fuel and emissions.';
+    } else if (description == 'Foggy') {
+      return 'Foggy morning. Consider working from home if possible to avoid high-emission traffic idling in poor visibility.';
     } else {
-      return 'Great day for a walk. Reach your step goal and save CO2 at the same time!';
+      return 'Moderate weather today. A 15-minute walk for short errands saves CO2 and helps you stay active!';
     }
   }
 

@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:location/location.dart' as loc;
 import 'models/user_profile.dart';
 import 'services/supabase_service.dart';
 import 'services/weather_service.dart';
@@ -28,24 +29,49 @@ void main() async {
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6d2NpdWpscnNhb3h1bnFqb2psIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2MTUxOTcsImV4cCI6MjA5MjE5MTE5N30.SRFiSebyzaK4J5nf0arK4Hg8xWvSZHzBdgGZV98jtwo',
   );
 
-  // Schedule daily notification (Mocking weather for now, in a real app this would fetch weather first)
-  await notificationService.scheduleDaily6AmNotification(
-    'Good morning!',
-    'Check out your personalized eco-tip for today based on the weather!',
-  );
+  // Initialize Services
+  final weatherService = WeatherService();
+  final aiService = AiService();
+
+  // Schedule daily notification with location-based weather
+  _setupDailyNotification(notificationService, weatherService, aiService);
 
   runApp(
     MultiProvider(
       providers: [
         Provider<SupabaseService>(create: (_) => SupabaseService()),
-        Provider<WeatherService>(create: (_) => WeatherService(apiKey: 'YOUR_WEATHER_API_KEY')),
-        Provider<AiService>(create: (_) => AiService()),
+        Provider<WeatherService>(create: (_) => weatherService),
+        Provider<AiService>(create: (_) => aiService),
         Provider<NotificationService>(create: (_) => notificationService),
         Provider<RideHailingService>(create: (_) => RideHailingService()),
       ],
       child: const FootpryntApp(),
     ),
   );
+}
+
+Future<void> _setupDailyNotification(
+  NotificationService notificationService,
+  WeatherService weatherService,
+  AiService aiService,
+) async {
+  try {
+    final location = loc.Location();
+    final locData = await location.getLocation();
+    final weather = await weatherService.getWeather(locData.latitude!, locData.longitude!);
+    final message = aiService.getMorningNotification(weather);
+    
+    await notificationService.scheduleDaily6AmNotification(
+      'Rise and Shine!',
+      message,
+    );
+  } catch (e) {
+    // Default fallback if location or weather fails
+    await notificationService.scheduleDaily6AmNotification(
+      'Good morning!',
+      'Check out your personalized eco-tip for today to reduce your footprint!',
+    );
+  }
 }
 
 class FootpryntApp extends StatelessWidget {
@@ -58,60 +84,65 @@ class FootpryntApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF7BA67B), // Softer Sage
-          primary: const Color(0xFF5D7A5D), // Soft Forest
-          secondary: const Color(0xFFA3BFA3), // Light Sage
-          tertiary: const Color(0xFFE8EFE8), // Very Pale Mist
-          surface: const Color(0xFFFCFDFC), // Near White
-          error: const Color(0xFFE57373),
+          seedColor: const Color(0xFF6B8E6B), // Deeper Sage
+          primary: const Color(0xFF4A674A), // Muted Forest
+          secondary: const Color(0xFF98B498), // Soft Sage
+          tertiary: const Color(0xFFF1F5F1), // Off-white Mist
+          surface: const Color(0xFFFFFFFF),
+          error: const Color(0xFFD63031),
         ),
         useMaterial3: true,
         fontFamily: 'Inter',
-        scaffoldBackgroundColor: const Color(0xFFFCFDFC),
+        scaffoldBackgroundColor: const Color(0xFFF7F9F7), // Very subtle green tint background
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.transparent,
           elevation: 0,
           centerTitle: true,
           titleTextStyle: TextStyle(
             color: Color(0xFF2D3436),
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
+            fontSize: 20,
+            fontWeight: FontWeight.w900,
             letterSpacing: -0.5,
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
             elevation: 0,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 28),
-            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.5),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 32),
+            textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, letterSpacing: 0.2),
           ),
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            textStyle: const TextStyle(fontWeight: FontWeight.w600),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            textStyle: const TextStyle(fontWeight: FontWeight.w700),
           ),
         ),
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
           fillColor: Colors.white,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-            borderSide: BorderSide(color: Colors.grey.shade200),
+            borderRadius: BorderRadius.circular(32),
+            borderSide: BorderSide(color: Colors.grey.shade100),
           ),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-            borderSide: BorderSide(color: Colors.grey.shade200),
+            borderRadius: BorderRadius.circular(32),
+            borderSide: BorderSide(color: Colors.grey.shade100),
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(24),
-            borderSide: const BorderSide(color: Color(0xFF5D7A5D), width: 1.5),
+            borderRadius: BorderRadius.circular(32),
+            borderSide: const BorderSide(color: Color(0xFF4A674A), width: 2),
           ),
-          labelStyle: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.w500),
-          prefixIconColor: const Color(0xFF5D7A5D),
+          labelStyle: TextStyle(color: Colors.grey.shade500, fontWeight: FontWeight.w600),
+          prefixIconColor: const Color(0xFF4A674A),
+        ),
+        cardTheme: CardThemeData(
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+          color: Colors.white,
         ),
       ),
       home: const AuthWrapper(),
@@ -482,6 +513,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _cityController = TextEditingController();
   final _carController = TextEditingController();
   File? _imageFile;
+  bool _isLoading = false;
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -562,7 +594,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             _buildTextField(_carController, 'Car Model (Optional)', Icons.directions_car_outlined),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () async {
+              onPressed: _isLoading ? null : () async {
+                setState(() => _isLoading = true);
                 try {
                   final profile = UserProfile(
                     id: '',
@@ -576,8 +609,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     createdAt: DateTime.now(),
                   );
                   await context.read<SupabaseService>().signUp(
-                        _emailController.text,
-                        _passwordController.text,
+                        _emailController.text.trim(),
+                        _passwordController.text.trim(),
                         profile,
                         _imageFile,
                       );
@@ -591,7 +624,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         title: const Text('Account Created!', style: TextStyle(fontWeight: FontWeight.w900)),
                         content: const Text(
                           'Welcome aboard! Please check your email for a confirmation link to activate your account.',
-                          style: TextStyle(height: 1.5),
+                          style: TextStyle(height: 1.5, fontWeight: FontWeight.w500),
                         ),
                         actions: [
                           TextButton(
@@ -599,7 +632,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Navigator.pop(context); // Close dialog
                               Navigator.pop(context); // Go back to login/welcome
                             },
-                            child: Text('Got it', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.w800, fontSize: 16)),
+                            child: Text('Got it', style: TextStyle(color: theme.colorScheme.primary, fontWeight: FontWeight.w900, fontSize: 16)),
                           ),
                         ],
                       ),
@@ -616,15 +649,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     );
                   }
+                } finally {
+                  if (mounted) setState(() => _isLoading = false);
                 }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 22),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
               ),
-              child: const Text('Create Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              child: _isLoading 
+                ? const SizedBox(height: 24, width: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
+                : const Text('Create Account', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
             ),
             const SizedBox(height: 40),
           ],
