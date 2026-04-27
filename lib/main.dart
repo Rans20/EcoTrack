@@ -182,85 +182,113 @@ class WelcomeScreen extends StatelessWidget {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Animated Blobs
-          Positioned(
-            top: -size.height * 0.1,
-            right: -size.width * 0.2,
-            child: _buildBlob(theme.colorScheme.secondary.withValues(alpha: 0.2), 300)
-                .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveY(begin: -20, end: 20, duration: 4.seconds, curve: Curves.easeInOut)
-                .scale(begin: const Offset(1, 1), end: const Offset(1.1, 1.1), duration: 5.seconds),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.tertiary,
+              theme.colorScheme.surface,
+              theme.colorScheme.secondary.withValues(alpha: 0.1),
+            ],
           ),
-          Positioned(
-            bottom: size.height * 0.1,
-            left: -size.width * 0.1,
-            child: _buildBlob(theme.colorScheme.primary.withValues(alpha: 0.1), 250)
-                .animate(onPlay: (controller) => controller.repeat(reverse: true))
-                .moveX(begin: -30, end: 30, duration: 6.seconds, curve: Curves.easeInOut)
-                .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 4.seconds),
-          ),
+        ),
+        child: Stack(
+          children: [
+            // Decorative Animated Blobs with Logo Colors
+            Positioned(
+              top: -100,
+              right: -50,
+              child: _buildBlob(theme.colorScheme.primary.withValues(alpha: 0.08), 400)
+                  .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                  .scale(begin: const Offset(1, 1), end: const Offset(1.2, 1.2), duration: 8.seconds, curve: Curves.easeInOut)
+                  .rotate(begin: 0, end: 0.05),
+            ),
+            Positioned(
+              bottom: -50,
+              left: -100,
+              child: _buildBlob(theme.colorScheme.secondary.withValues(alpha: 0.05), 350)
+                  .animate(onPlay: (controller) => controller.repeat(reverse: true))
+                  .moveY(begin: 0, end: 50, duration: 10.seconds, curve: Curves.easeInOut)
+                  .scale(begin: const Offset(1, 1), end: const Offset(1.3, 1.3), duration: 7.seconds),
+            ),
 
-          SafeArea(
-            child: Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Logo with Soft Shadow & Animation
-                    Container(
-                      padding: const EdgeInsets.all(28),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                            blurRadius: 40,
-                            offset: const Offset(0, 15),
+            SafeArea(
+              child: Center(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Logo with Neumorphic/Soft Shadow
+                      Container(
+                        padding: const EdgeInsets.all(32),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.05),
+                              blurRadius: 50,
+                              offset: const Offset(0, 20),
+                            ),
+                            BoxShadow(
+                              color: Colors.white,
+                              blurRadius: 20,
+                              offset: const Offset(-5, -5),
+                            ),
+                          ],
+                        ),
+                        child: Image.asset('assets/logo/logo.png', width: 130, height: 130),
+                      ).animate().scale(duration: 800.ms, curve: Curves.easeOutBack).fadeIn(),
+
+                      const SizedBox(height: 56),
+
+                      // Refined Title Section
+                      Column(
+                        children: [
+                          Text(
+                            'Footprynt',
+                            style: TextStyle(
+                              fontSize: 56,
+                              fontWeight: FontWeight.w900,
+                              color: theme.colorScheme.primary,
+                              letterSpacing: -2.5,
+                              height: 1,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              'TRACK • REDUCE • IMPACT',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                color: theme.colorScheme.primary.withValues(alpha: 0.6),
+                                letterSpacing: 4,
+                              ),
+                            ),
                           ),
                         ],
-                      ),
-                      child: Image.asset('assets/logo/logo.png', width: 120, height: 120),
-                    ).animate().scale(delay: 200.ms, duration: 600.ms, curve: Curves.easeOutBack).fadeIn(),
+                      ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.1, end: 0),
 
-                    const SizedBox(height: 48),
+                      const SizedBox(height: 80),
 
-                    // Title & Subtitle
-                    Column(
-                      children: [
-                        Text(
-                          'Footprynt',
-                          style: TextStyle(
-                            fontSize: 52,
-                            fontWeight: FontWeight.w900,
-                            color: theme.colorScheme.primary,
-                            letterSpacing: -2,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'TRACK • REDUCE • IMPACT',
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w800,
-                            color: Colors.grey.shade500,
-                            letterSpacing: 5,
-                          ),
-                        ),
-                      ],
-                    ).animate().fadeIn(delay: 400.ms).slideY(begin: 0.2, end: 0),
-
-                    const SizedBox(height: 80),
-
-                    // Action Buttons with Glass-like effect
-                    Column(
-                      children: [
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
+                      // Modern Action Buttons
+                      Column(
+                        children: [
+                          // Primary Google Button
+                          _buildPrimaryButton(
+                            context,
                             onPressed: () async {
                               try {
                                 await context.read<SupabaseService>().signInWithGoogle();
@@ -273,93 +301,129 @@ class WelcomeScreen extends StatelessWidget {
                               } catch (e) {
                                 if (context.mounted) {
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Error signing in: $e')),
+                                    SnackBar(content: Text('Error: $e')),
                                   );
                                 }
                               }
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.primary,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(vertical: 20),
-                            ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.g_mobiledata, size: 32),
-                                SizedBox(width: 12),
+                                Icon(Icons.g_mobiledata, size: 36),
+                                SizedBox(width: 8),
                                 Text('Continue with Google'),
                               ],
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 20),
-                        
-                        // Glassmorphic Email Button
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                            child: Container(
-                              width: double.infinity,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.6),
-                                borderRadius: BorderRadius.circular(24),
-                                border: Border.all(color: Colors.white.withValues(alpha: 0.4)),
-                              ),
-                              child: TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => const LoginScreen()),
-                                  );
-                                },
-                                child: Text(
-                                  'Sign In with Email',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: theme.colorScheme.primary,
+                          
+                          const SizedBox(height: 20),
+                          
+                          // Glassmorphic Email Button
+                          _buildGlassButton(
+                            context,
+                            label: 'Sign In with Email',
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                              );
+                            },
+                          ),
+                          
+                          const SizedBox(height: 32),
+                          
+                          // Custom Styled Footer Text
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                              );
+                            },
+                            child: RichText(
+                              text: TextSpan(
+                                style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
+                                children: [
+                                  const TextSpan(text: "New to Footprynt? "),
+                                  TextSpan(
+                                    text: "Join us now",
+                                    style: TextStyle(
+                                      color: theme.colorScheme.primary,
+                                      fontWeight: FontWeight.w800,
+                                    ),
                                   ),
-                                ),
+                                ],
                               ),
                             ),
                           ),
-                        ),
-                        
-                        const SizedBox(height: 32),
-                        
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                            );
-                          },
-                          child: RichText(
-                            text: TextSpan(
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
-                              children: [
-                                const TextSpan(text: "New here? "),
-                                TextSpan(
-                                  text: "Create an Account",
-                                  style: TextStyle(
-                                    color: theme.colorScheme.primary,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1, end: 0),
-                  ],
+                        ],
+                      ).animate().fadeIn(delay: 600.ms).slideY(begin: 0.1, end: 0),
+                    ],
+                  ),
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPrimaryButton(BuildContext context, {required VoidCallback onPressed, required Widget child}) {
+    final theme = Theme.of(context);
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.primary.withValues(alpha: 0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
+      ),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: theme.colorScheme.primary,
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 22),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
+        ),
+        child: child,
+      ),
+    );
+  }
+
+  Widget _buildGlassButton(BuildContext context, {required String label, required VoidCallback onPressed}) {
+    final theme = Theme.of(context);
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(32),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(32),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.6), width: 1.5),
+          ),
+          child: TextButton(
+            onPressed: onPressed,
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 22),
+            ),
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: theme.colorScheme.primary,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

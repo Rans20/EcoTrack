@@ -130,23 +130,57 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                blurRadius: 15,
-                offset: const Offset(0, 5),
+        GestureDetector(
+          onTap: () async {
+            final scaffoldMessenger = ScaffoldMessenger.of(context);
+            final theme = Theme.of(context);
+            final confirmed = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                title: const Text('Sign Out', style: TextStyle(fontWeight: FontWeight.bold)),
+                content: const Text('Are you sure you want to sign out?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, false),
+                    child: Text('Cancel', style: TextStyle(color: Colors.grey[600], fontWeight: FontWeight.bold)),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.pop(context, true),
+                    child: Text('Sign Out', style: TextStyle(color: theme.colorScheme.error, fontWeight: FontWeight.bold)),
+                  ),
+                ],
               ),
-            ],
-            border: Border.all(color: theme.colorScheme.tertiary.withValues(alpha: 0.5), width: 2),
+            );
+
+            if (confirmed == true && context.mounted) {
+              try {
+                await context.read<SupabaseService>().signOut();
+              } catch (e) {
+                scaffoldMessenger.showSnackBar(
+                  SnackBar(content: Text('Error signing out: $e')),
+                );
+              }
+            }
+          },
+          child: Container(
+            width: 56,
+            height: 56,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+              border: Border.all(color: theme.colorScheme.tertiary.withValues(alpha: 0.5), width: 2),
+            ),
+            alignment: Alignment.center,
+            child: Icon(Icons.person_outline, color: theme.colorScheme.primary, size: 28),
           ),
-          alignment: Alignment.center,
-          child: Icon(Icons.person_outline, color: theme.colorScheme.primary, size: 28),
         ),
       ],
     );
